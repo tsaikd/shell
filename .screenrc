@@ -1,0 +1,56 @@
+# hardstatus alwayslastline "%{=b bW} {%l}%018=%{=b WK} %H %-028=%{YK} %Y %M %d(%D) %{RW} %C %A "
+# hardstatus alwayslastline "%{=b}%{bw} %{ck} %-Lw%{gw}%n%f* %t%? (%u)%? %{-}%+Lw %{bw}"
+caption always "%{=b bW} %n %{=b bG}[%h]%{= bb}%{-}%=%{=b bY}%l | %m/%d %c%{= bb} "
+hardstatus alwayslastline "%{=b bW} %-w%{=b rW}%n %t%{=b bW}%+w %="
+
+#startup_message off
+
+defutf8 on
+defencoding utf8
+defscrollback 5000
+
+encoding utf8 utf8
+
+cjkwidth on
+
+bind ^k kill
+#bind U encoding utf8 utf8
+#bind B encoding big5 utf8
+#bind G encoding gbk utf8
+#bind J encoding shift-jis utf8
+
+bind u eval "encoding utf8 utf8" "redisplay" "echo 'UTF-8 mode'"
+bind ^u eval "encoding utf8 utf8" "redisplay" "echo 'UTF-8 mode'"
+bind b eval "encoding big5 utf8" "redisplay" "echo 'BIG5 to UTF-8 mode'"
+bind ^b eval "encoding big5 utf8" "redisplay" "echo 'BIG5 to UTF-8 mode'"
+bind g eval "encoding gbk utf8" "redisplay" "echo 'GBK to UTF-8 mode'"
+bind j eval "encoding shift-jis utf8" "redisplay" "echo 'SHIFT-JIS to UTF-8 mode'"
+
+bindkey "\033\0330" number 0 # ESC+ESC+0
+bindkey "\033\0331" number 1 # ESC+ESC+1
+bindkey "\033\0332" number 2 # ESC+ESC+2
+bindkey "\033\0333" number 3 # ESC+ESC+3
+bindkey "\033\0334" number 4 # ESC+ESC+4
+bindkey "\033\0335" number 5 # ESC+ESC+5
+bindkey "\033\0336" number 6 # ESC+ESC+6
+bindkey "\033\0337" number 7 # ESC+ESC+7
+bindkey "\033\0338" number 8 # ESC+ESC+8
+bindkey "\033\0339" number 9 # ESC+ESC+9
+
+# define Ctrl+ left/right arrow to change between screens
+#termcapinfo xterm "ks=\E[?1l\E=:ku=\E[A:kd=\E[B:kl=\E[D:kr=\E[C:kh=\E[5~:kH=\E[F"
+
+# pietty
+bindkey "\033[D" prev # Ctrl+Left
+bindkey "\033[C" next # Ctrl+Right
+
+# Konsole
+bindkey "^[[1;5D" prev # Ctrl+Left
+bindkey "^[[1;5C" next # Ctrl+Right
+
+# Gnome term
+bindkey "\033O5D" prev # Ctrl+Left
+bindkey "\033O5C" next # Ctrl+Right
+bindkey "\033O3D" stuff "\033\033[D" # Alt+Left
+bindkey "\033O3C" stuff "\033\033[C" # Alt+Right
+

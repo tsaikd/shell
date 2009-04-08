@@ -1,0 +1,16 @@
+termtype = xterm
+fg_color = white
+bg_color = black
+tabsize = 4
+logsize = 10000
+scrollbar_mode = right
+use_login_shell = false
+fontsize = 23
+geometry = 80x25+20+50
+use_anti_alias = true
+use_transbg = true
+brightness = 10
+contrast = 40
+mod_meta_mode = esc
+mod_meta_key = alt
+col_size_of_width_a = 2

@@ -1,0 +1,14 @@
+ISO8859_1=Terminus-iso10646;
+ISO10646_UCS4_1=Terminus-iso10646;
+ISO10646_UCS4_1_BIWIDTH=MingLiu-iso10646;
+#ISO10646_UCS4_1_BIWIDTH=Baekmuk Gulim-iso10646;
+
+#BIG5=MingLiu-iso10646;
+#KOI8_U=Baekmuk Gulim-iso10646;
+#KOI8_R=Baekmuk Gulim-iso10646;
+#JISX0213_2000_1=Baekmuk Gulim-iso10646;
+#JISX0213_2000_2=Baekmuk Gulim-iso10646;
+#ISO10646_UCS4_1_BIWIDTH=Bitstream Vera Serif-iso10646;MingLiu-iso10646;
+#ISO8859_1=Luxi Mono-iso10646-1;
+#BIG5=SimHei-iso10646-1;
+

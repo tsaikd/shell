@@ -1,0 +1,8 @@
+ISO10646_UCS4_1 = -gnu-unifont-medium-r-normal--16-160-75-75-c-80-iso10646-1;
+ISO10646_UCS4_1_BIWIDTH = -dynalab-mingliu-medium-r-normal--0-0-0-0-m-0-iso10646-1;
+#ISO10646_UCS4_1_BIWIDTH = -dynalab-mingliu-medium-r-normal--0-0-0-0-m-0-iso10646-1;-hwan-baekmuk headline-medium-r-normal--0-0-0-0-p-0-iso10646-1;
+#ISO10646_UCS4_1_BIWIDTH = -hwan-baekmuk headline-medium-r-normal--0-0-0-0-p-0-iso10646-1;-dynalab-mingliu-medium-r-normal--0-0-0-0-m-0-iso10646-1;
+#ISO10646_UCS4_1_BIWIDTH = -hwan-baekmuk dotum-medium-r-normal--0-0-0-0-p-0-iso10646-1;
+
+#ISO10646_UCS4_1_BIWIDTH = -gnu-unifont-medium-r-normal--16-160-75-75-c-80-iso10646-1;
+
