@@ -7,6 +7,7 @@ if [ "${PS1}" ] ; then # this line is used for sftp login
 
 export PATH="${PATH}:${HOME}/script:${HOME}/bin"
 export LANG="en_US.UTF-8"
+unset LANGUAGE
 export LESSHISTFILE="-"
 export KD_PUBLIC_PC=1
 umask 022
@@ -49,8 +50,7 @@ bind '"\x1b\x5b\x42":history-search-forward'
 }
 
 [ "$(type -p wget)" ] && function myip () {
-	wget "http://whatismyip.org/" -qO /dev/stdout
-	echo
+	wget "http://www.myipaddress.com/" -qO /dev/stdout | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
 }
 
 # $1 : title
@@ -190,13 +190,15 @@ if [ "$(id -u)" -eq 0 ] ; then
 	if [ "$(type -p emerge)" ] ; then
 		alias ee='emerge -v'
 		alias eea='ee -a'
+		alias eec='eea -C'
+		alias eeC='eea --depclean'
 		alias eef='eea -fO'
 		alias ee1='eea -1'
 		alias eew='eea -uDN world'
 		alias eewp='eew -p'
 	fi
 	if [ "$(type -p eix)" ] ; then
-		alias eixx='type -p layman >/dev/null && layman -S ; eix-sync -v'
+		alias eixx='type -p layman >/dev/null && layman -S ; eix-sync'
 	fi
 	if [ "$(type -p ntpdate)" ] ; then
 		function ntpdate() {
