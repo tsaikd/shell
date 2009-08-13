@@ -65,20 +65,6 @@ bind '"\x1b\x5b\x42":history-search-forward'
 #	screen -X eval "screen -t \"$1\" $3 bbsbot $USERNAME \"$2\"" "encoding big5 utf8"
 }
 
-[ "$(type -p sdcv)" ] && \
-	alias sdcv='fun_sdcv' && \
-	alias sd='fun_sdcv' && \
-	function fun_sdcv () {
-		local sdcv="$(type -P sdcv)"
-		if [ $# -gt 0 ] && \
-		[ "$($sdcv -n "$@" | grep -i -- "^-->$@$" 2>/dev/null)" ] && \
-		[ "$($sdcv "$@" | wc -l)" -gt "$(tput lines)" ] ; then
-			$sdcv "$@" | ${PAGER:-less}
-		else
-			$sdcv "$@"
-		fi
-	}
-
 alias cd..='cd ..'
 alias cp='cp -i'
 alias df='df -h -x supermount'
@@ -218,8 +204,10 @@ if [ "$(id -u)" -eq 0 ] ; then
 	}
 fi
 
-[ "$(tput cols)" -lt 80 ] && echo "The screen columns are smaller then 80!"
-[ "$(tput lines)" -lt 24 ] && echo "The screen lines are smaller then 24!"
+if [ "$(type -p tput)" ] ; then
+	[ "$(tput cols)" -lt 80 ] && echo "The screen columns are smaller then 80!"
+	[ "$(tput lines)" -lt 24 ] && echo "The screen lines are smaller then 24!"
+fi
 [ "$(id -u)" -ne 0 ] && [ -n "$(type -p last)" ] && last -5
 
 [ -r "${HOME}/.bashrc.local" ] && source "${HOME}/.bashrc.local"
