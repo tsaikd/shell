@@ -8,3 +8,10 @@
 	di = diff
 	st = status
 	ui = update-server-info
+	sa = stash
+[core]
+	compression = 9
+[color]
+	branch = auto
+	diff = auto
+	status = auto
