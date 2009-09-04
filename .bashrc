@@ -20,6 +20,8 @@ fi
 bind '"\x1b\x5b\x41":history-search-backward' 
 bind '"\x1b\x5b\x42":history-search-forward'
 
+[ "$(type -p setterm)" ] && TERM=linux setterm -regtabs 4
+
 [ "$(type -p wget)" ] && function kd_update_bash () {
 	local i
 	local DIRURL="http://svn.tsaikd.org/gentoo/bash/"
