@@ -3,13 +3,22 @@
 if [ "${PS1}" ] ; then # this line is used for sftp login
 
 [ "$(type -p distcc)" ] && export PATH="/usr/lib/distcc/bin:${PATH}"
-[ "$(type -p ccache)" ] && export PATH="/usr/lib/ccache/bin:${PATH}"
+if [ "$(type -p ccache)" ] ; then
+	if [ -d "/usr/lib/ccache/bin" ] ; then
+		export PATH="/usr/lib/ccache/bin:${PATH}"
+	elif [ -x "/usr/lib/ccache/gcc" ] ; then
+		export PATH="/usr/lib/ccache:${PATH}"
+	else
+		echo "ccache detected, but unknown path!!"
+	fi
+fi
 
 export PATH="${PATH}:${HOME}/script:${HOME}/bin"
-export LANG="en_US.UTF-8"
-unset LANGUAGE
+export LANG="en_US.utf8"
 export LESSHISTFILE="-"
 export KD_PUBLIC_PC=1
+[ "$(type -p vim)" ] && true ${EDITOR:=vim}
+export EDITOR
 umask 022
 if [ "$(id -u)" -ne 0 ] ; then
 	PS1='\[\e[01;31m\]\h \[\e[01;32m\]\u\[\e[01;34;40m\] \w \$ \[\e[m\]'
@@ -52,7 +61,8 @@ bind '"\x1b\x5b\x42":history-search-forward'
 }
 
 [ "$(type -p wget)" ] && function myip () {
-	wget "http://www.myipaddress.com/" -qO /dev/stdout | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+	wget "http://whatismyip.org/" -qO /dev/stdout
+	echo
 }
 
 # $1 : title
@@ -66,6 +76,28 @@ bind '"\x1b\x5b\x42":history-search-forward'
 	screen -X eval "screen -t \"$1\" $3 /usr/bin/kd_bbsbot.py \"$2\"" "encoding big5 utf8"
 #	screen -X eval "screen -t \"$1\" $3 bbsbot $USERNAME \"$2\"" "encoding big5 utf8"
 }
+
+# app-shells/gentoo-bashcomp feature
+if [[ -f /etc/profile.d/bash-completion ]] ; then
+	source /etc/profile.d/bash-completion
+	if [ "$(type -p emerge)" ] ; then
+		for i in eei ee eea eef ee1 ; do
+			complete -o filenames -F _emerge "${i}"
+		done
+	fi
+fi
+
+if [ "$(type -p emerge)" ] ; then
+	alias eei='emerge --info'
+	if [ "$(id -u)" -eq 0 ] ; then
+		alias ee='emerge -v'
+		alias eea='ee -a'
+		alias eef='eea -fO'
+		alias ee1='eea -1'
+		alias eew='eea -uDN world'
+		alias eewp='eew -p'
+	fi
+fi
 
 alias cd..='cd ..'
 alias cp='cp -i'
@@ -104,9 +136,13 @@ else
 	alias ls='ls -F --show-control-chars --color=auto'
 fi
 
+[ "$(type -p readlink)" ] && \
+	alias cd.='cd "$(readlink -f .)"'
 [ "$(type -p sudo)" ] && \
 	alias ssu='sudo su' && \
 	alias su='echo "Please use ssu instead"'
+[ "$(type -p vim)" ] && \
+	alias vi='vim'
 [ "$(type -p perl)" ] && \
 	alias col='perl -e "while (<>) { s/\033\[[\d;]*[mH]//g; print; }" | col'
 [ "$(type -p reboot)" ] && \
@@ -133,6 +169,8 @@ fi
 	alias csc='cscope -bR'
 [ "$(type -p rdesktop)" ] && \
 	alias rdesktop='rdesktop -a 16 -P -f -z'
+[ "$(type -p gitk)" ] && \
+	alias gitk='gitk --all'
 [ "$(type -p mc)" ] && [ "$TERM" == "screen" ] && \
 	alias mc='mc -a'
 [ -z "$(type -p host)" ] && [ "$(type -p links)" ] && \
@@ -190,7 +228,7 @@ if [ "$(id -u)" -eq 0 ] ; then
 		alias eewp='eew -p'
 	fi
 	if [ "$(type -p eix)" ] ; then
-		alias eixx='type -p layman >/dev/null && layman -S ; eix-sync'
+		alias eixx='type -p layman >/dev/null && layman -S ; eix-sync -v'
 	fi
 	if [ "$(type -p ntpdate)" ] ; then
 		function ntpdate() {
@@ -209,6 +247,16 @@ if [ "$(id -u)" -eq 0 ] ; then
 		find -iname "index.htm*" -delete ; cd - >/dev/null
 	}
 fi
+
+# $1 := public key file path
+# $2 := remote host ([user@]host.ip[:sshport])
+function ssh_send_authpubkey() {
+	if [ $# -ne 2 ] ; then
+		echo "Usage: ${FUNCNAME} <KEYFILE> <HOST>"
+	else
+		cat "${1}" | ssh "${2}" 'cat >> ~/.ssh/authorized_keys'
+	fi
+}
 
 if [ "$(type -p tput)" ] ; then
 	[ "$(tput cols)" -lt 80 ] && echo "The screen columns are smaller then 80!"
