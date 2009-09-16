@@ -21,6 +21,13 @@ export KD_PUBLIC_PC=1
 export EDITOR
 umask 022
 [ -f "/etc/bash_completion" ] && source "/etc/bash_completion"
+d="${HOME}/script/bash_completion.d"
+if [ -d "${d}" ] ; then
+	for i in "${d}"/* ; do
+		[[ ${i##*/} != @\(*~\|*.bak\|*.swp\|\#*\#\|*.dpkg*\|.rpm*\) ]] && \
+			source "${i}"
+	done
+fi
 
 PS1_HOST='\[\e[01;31m\]\h'
 if [ "$(id -u)" -ne 0 ] ; then
