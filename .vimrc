@@ -4,7 +4,7 @@ set noai
 set nobackup
 set tabstop=4
 set shiftwidth=4
-autocmd FileType c,cpp set nocindent
+" autocmd FileType c,cpp set nocindent
 
 " 自動補全命令時, 使用菜單式匹配列表
 set wildmenu
@@ -20,6 +20,7 @@ map <F9> :wincmd p<CR>
 map <F11> gg=G<CR>
 " 轉換檔案編碼
 map <F12> :set tenc=utf-8<CR>:set fenc=utf-8<CR>
+
 " TagList
 nnoremap <silent> <F8> :Tlist<CR>:wincmd p<CR>
 

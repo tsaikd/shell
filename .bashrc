@@ -20,40 +20,23 @@ export KD_PUBLIC_PC=1
 [ "$(type -p vim)" ] && true ${EDITOR:=vim}
 export EDITOR
 umask 022
+[ -f "/etc/bash_completion" ] && source "/etc/bash_completion"
+
+PS1_HOST='\[\e[01;31m\]\h'
 if [ "$(id -u)" -ne 0 ] ; then
-	PS1='\[\e[01;31m\]\h \[\e[01;32m\]\u\[\e[01;34;40m\] \w \$ \[\e[m\]'
+	PS1_USER=' \[\e[01;32m\]\u'
 else
-	PS1='\[\e[01;31m\]\h \[\e[01;33;41m\]\u\[\e[01;34;40m\] \w \$ \[\e[m\]'
+	PS1_USER=' \[\e[01;33;41m\]\u'
 fi
+PS1_DIR=' \[\e[01;34;40m\]\w\[\e[m\]'
+PS1_TAIL='\[\e[m\] $ '
+[ "$(type -t __git_ps1)" ] && PS1_GIT='$(__git_ps1 " \[\e[01;35m\](%s)")'
+PS1="${PS1_HOST}${PS1_USER}${PS1_DIR}${PS1_GIT}${PS1_TAIL}"
 
 bind '"\x1b\x5b\x41":history-search-backward' 
 bind '"\x1b\x5b\x42":history-search-forward'
 
 [ "$(type -p setterm)" ] && TERM=linux setterm -regtabs 4
-
-[ "$(type -p wget)" ] && function kd_update_bash () {
-	local i
-	local DIRURL="http://svn.tsaikd.org/gentoo/bash/"
-	local FILELIST=".bashrc .bash_logout"
-
-	[ "$(type -p top)" ] && FILELIST="${FILELIST} .toprc"
-	[ "$(type -p vi vim)" ] && FILELIST="${FILELIST} .vimrc"
-	[ "$(type -p screen)" ] && FILELIST="${FILELIST} .screenrc"
-
-	for i in ${FILELIST} ; do
-		wget -q --spider "${DIRURL}${i}" && \
-			wget "${DIRURL}${i}" -O "${HOME}/${i}" && \
-			chmod 644 "${HOME}/${i}"
-	done
-
-	if [ ! -e "${HOME}/.bash_profile" ] ; then
-		cd
-		ln -s .bashrc .bash_profile
-		cd -
-	fi
-}
-[ "$(type -t kd_update_bash)" ] && \
-	alias kd_update_bash='kd_update_bash ; source ~/.bashrc'
 
 [ "$(type -p screen)" ] && [ "$TERM" != "screen" ] && function sr() {
 	screen -wipe
@@ -104,11 +87,19 @@ alias cp='cp -i'
 alias df='df -h -x supermount'
 alias du='du -h'
 alias fuser='fuser -muv'
-if [ "$(ls --help | grep -- "--group-directories-first")" ] ; then
-	alias l='ls --group-directories-first'
+
+lshelp="$(ls --help)"
+lsopt="-F"
+if [ "$(uname)" == "FreeBSD" ] ; then
+	lsopt="${lsopt} -G"
 else
-	alias l='ls'
+	lsopt="${lsopt} --color=auto"
 fi
+[ "$(grep -- "--show-control-chars" <<<"${lshelp}")" ] && \
+	lsopt="${lsopt} --show-control-chars"
+[ "$(grep -- "--group-directories-first" <<<"${lshelp}")" ] && \
+	lsopt="${lsopt} --group-directories-first"
+alias l="ls ${lsopt}"
 alias la='l -a'
 alias l1='l -1'
 alias ll='l -l'
@@ -130,12 +121,6 @@ alias ssht='ssh tsaikd@home.tsaikd.org'
 	alias rdtsl='rdt -r sound:local -x lan' && \
 	alias rdtsr='rdt -r sound:remote'
 
-if [ "$(uname)" == "FreeBSD" ] ; then
-	alias ls='ls -FG'
-else
-	alias ls='ls -F --show-control-chars --color=auto'
-fi
-
 [ "$(type -p readlink)" ] && \
 	alias cd.='cd "$(readlink -f .)"'
 [ "$(type -p sudo)" ] && \
@@ -147,10 +132,10 @@ fi
 	alias col='perl -e "while (<>) { s/\033\[[\d;]*[mH]//g; print; }" | col'
 [ "$(type -p reboot)" ] && \
 	alias reboot='sync;sync;sync;sync;sync;sync;sleep 1; exec /sbin/reboot'
-[ "$(type -p diff)" ] && \
-	alias difff='diff -ruNp'
 [ "$(type -p colordiff)" ] && \
 	alias diff='colordiff'
+[ "$(type -p diff)" ] && \
+	alias diff='diff -ruNp'
 [ "$(type -p mail)" ] && \
 	alias mail='mail -u `\whoami`'
 [ "$(type -p svn)" ] && \
