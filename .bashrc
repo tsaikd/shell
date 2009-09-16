@@ -14,7 +14,7 @@ if [ "$(type -p ccache)" ] ; then
 fi
 
 export PATH="${PATH}:${HOME}/script:${HOME}/bin"
-export LANG="en_US.utf8"
+export LANG="C"
 export LESSHISTFILE="-"
 export KD_PUBLIC_PC=1
 [ "$(type -p vim)" ] && true ${EDITOR:=vim}
@@ -42,6 +42,15 @@ PS1="${PS1_HOST}${PS1_USER}${PS1_DIR}${PS1_GIT}${PS1_TAIL}"
 
 bind '"\x1b\x5b\x41":history-search-backward' 
 bind '"\x1b\x5b\x42":history-search-forward'
+
+if [ "$(type -p locale)" ] ; then
+	localelist="$(locale -a)"
+	if [ "$(grep -i "zh_TW.utf" <<<"${localelist}")" ] ; then
+		export LANG="$(grep -i "zh_TW.utf" <<<"${localelist}")"
+	elif [ "$(grep -i "en_US.utf" <<<"${localelist}")" ] ; then
+		export LANG="$(grep -i "en_US.utf" <<<"${localelist}")"
+	fi
+fi
 
 [ "$(type -p setterm)" ] && TERM=linux setterm -regtabs 4
 
