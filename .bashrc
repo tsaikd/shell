@@ -151,8 +151,7 @@ alias ssht='ssh tsaikd@home.tsaikd.org'
 [ "$(type -p readlink)" ] && \
 	alias cd.='cd "$(readlink -f .)"'
 [ "$(type -p sudo)" ] && \
-	alias ssu='sudo su' && \
-	alias su='echo "Please use ssu instead"'
+	alias ssu='sudo su'
 [ "$(type -p vim)" ] && \
 	alias vi='vim'
 [ "$(type -p perl)" ] && \
