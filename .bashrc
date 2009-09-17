@@ -15,6 +15,7 @@ fi
 
 export PATH="${PATH}:${HOME}/script:${HOME}/bin"
 export LANG="C"
+unset LANGUAGE
 export LESSHISTFILE="-"
 export KD_PUBLIC_PC=1
 [ "$(type -p vim)" ] && true ${EDITOR:=vim}
