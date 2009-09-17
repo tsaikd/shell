@@ -6,9 +6,10 @@
 	ci = commit
 	co = checkout
 	di = diff
+	sa = stash
 	st = status
 	ui = update-server-info
-	sa = stash
+	llog = log --graph --decorate --all
 [core]
 	compression = 9
 [color]
