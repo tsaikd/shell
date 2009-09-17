@@ -20,14 +20,33 @@ export KD_PUBLIC_PC=1
 [ "$(type -p vim)" ] && true ${EDITOR:=vim}
 export EDITOR
 umask 022
-[ -f "/etc/bash_completion" ] && source "/etc/bash_completion"
-d="${HOME}/script/bash_completion.d"
-if [ -d "${d}" ] ; then
-	for i in "${d}"/* ; do
-		[[ ${i##*/} != @\(*~\|*.bak\|*.swp\|\#*\#\|*.dpkg*\|.rpm*\) ]] && \
-			source "${i}"
-	done
-fi
+
+# load bach complation
+function lbcomp() {
+	local d i
+	[ -f "/etc/bash_completion" ] && source "/etc/bash_completion"
+	d="${HOME}/script/bash_completion.d"
+	if [ -d "${d}" ] ; then
+		for i in "${d}"/* ; do
+			[[ ${i##*/} != @\(*~\|*.bak\|*.swp\|\#*\#\|*.dpkg*\|.rpm*\) ]] && \
+				source "${i}"
+		done
+	fi
+
+	# app-shells/gentoo-bashcomp feature
+	if [[ -f /etc/profile.d/bash-completion ]] ; then
+		source /etc/profile.d/bash-completion
+		if [ "$(type -p emerge)" ] ; then
+			for i in eei ee eea eef ee1 ; do
+				complete -o filenames -F _emerge "${i}"
+			done
+		fi
+	fi
+
+	# set PS1
+	[ "$(type -t __git_ps1)" ] && PS1_GIT='$(__git_ps1 " \[\e[01;35m\](%s)")'
+	eval PS1="${PS1_EVAL}"
+}
 
 PS1_HOST='\[\e[01;31m\]\h'
 if [ "$(id -u)" -ne 0 ] ; then
@@ -37,8 +56,8 @@ else
 fi
 PS1_DIR=' \[\e[01;34;40m\]\w\[\e[m\]'
 PS1_TAIL='\[\e[m\] $ '
-[ "$(type -t __git_ps1)" ] && PS1_GIT='$(__git_ps1 " \[\e[01;35m\](%s)")'
-PS1="${PS1_HOST}${PS1_USER}${PS1_DIR}${PS1_GIT}${PS1_TAIL}"
+PS1_EVAL='${PS1_HOST}${PS1_USER}${PS1_DIR}${PS1_GIT}${PS1_TAIL}'
+eval PS1="${PS1_EVAL}"
 
 bind '"\x1b\x5b\x41":history-search-backward' 
 bind '"\x1b\x5b\x42":history-search-forward'
@@ -50,6 +69,7 @@ if [ "$(type -p locale)" ] ; then
 	elif [ "$(grep -i "en_US.utf" <<<"${localelist}")" ] ; then
 		export LANG="$(grep -i "en_US.utf" <<<"${localelist}")"
 	fi
+	unset localelist
 fi
 
 [ "$(type -p setterm)" ] && TERM=linux setterm -regtabs 4
@@ -76,16 +96,6 @@ fi
 #	screen -X eval "screen -t \"$1\" $3 bbsbot $USERNAME \"$2\"" "encoding big5 utf8"
 }
 
-# app-shells/gentoo-bashcomp feature
-if [[ -f /etc/profile.d/bash-completion ]] ; then
-	source /etc/profile.d/bash-completion
-	if [ "$(type -p emerge)" ] ; then
-		for i in eei ee eea eef ee1 ; do
-			complete -o filenames -F _emerge "${i}"
-		done
-	fi
-fi
-
 if [ "$(type -p emerge)" ] ; then
 	alias eei='emerge --info'
 	if [ "$(id -u)" -eq 0 ] ; then
@@ -97,12 +107,6 @@ if [ "$(type -p emerge)" ] ; then
 		alias eewp='eew -p'
 	fi
 fi
-
-alias cd..='cd ..'
-alias cp='cp -i'
-alias df='df -h -x supermount'
-alias du='du -h'
-alias fuser='fuser -muv'
 
 lshelp="$(ls --help)"
 lsopt="-F"
@@ -121,6 +125,13 @@ alias l1='l -1'
 alias ll='l -l'
 alias lla='l -la'
 alias lsd='l -d */'
+unset lshelp lsopt
+
+alias cd..='cd ..'
+alias cp='cp -i'
+alias df='df -h -x supermount'
+alias du='du -h'
+alias fuser='fuser -muv'
 alias md='mkdir'
 alias mv='mv -i'
 alias rd='rmdir'
