@@ -101,6 +101,8 @@ if [ "$(type -p emerge)" ] ; then
 	if [ "$(id -u)" -eq 0 ] ; then
 		alias ee='emerge -v'
 		alias eea='ee -a'
+		alias eec='eea -C'
+		alias eeC='eea --depclean'
 		alias eef='eea -fO'
 		alias ee1='eea -1'
 		alias eew='eea -uDN world'
@@ -210,33 +212,30 @@ if [ "$(type -t fun_bbs_bot)" ] ; then
 	alias bbot_moon='fun_bbs_bot "MoonStar" moon 0 Tsaikd'
 #	alias bbot_moon='fun_bbs_bot "MoonStar" moonstar.twbbs.org 0 Tsaikd'
 fi
-if [ "$(type -p emerge)" ] ; then
-	alias eei='emerge --info'
-fi
 
 # only in gentoo
 if [ "$(uname -r | grep "^2\.[46]\.[0-9]\+-gentoo\(-r[0-9]\+\)\?$")" ] ; then
 	[ -z "$(type -p dig)" ] && alias dig='echo "Please emerge \"net-dns/bind-tools\" for dig"'
 fi
 
+i="/var/log/messages"
+[ -r "${i}" ] && alias cmesg="tail -n 20 \"${i}\""
+i="/var/log/syslog"
+[ -r "${i}" ] && alias csyslog="tail -n 20 \"${i}\""
+i="/var/log/syslog"
+[ -r "${i}" ] && alias csyslog="tail -n 20 \"${i}\""
+i="/var/log/apache2/access.log"
+[ -r "${i}" ] && alias capacheaccess="tail -n 20 \"${i}\""
+i="/var/log/apache2/error.log"
+[ -r "${i}" ] && alias capacheerror="tail -n 20 \"${i}\""
+
 if [ "$(id -u)" -eq 0 ] ; then
-	alias cmesg='tail -n 20 /var/log/messages'
-	[ -f "/var/log/apache2/access_log" ] && alias capachelog='tail -n 20 /var/log/apache2/access_log'
-	alias viconf='vi /root/script/config/general.sh'
+	i="/root/script/config/general.sh"
+	[ -w "${i}" ] && alias viconf="vi \"${i}\""
 	if [ "$(type -p ccache)" ] ; then
 		export CCACHE_DIR="/var/tmp/ccache"
 		export CCACHE_NOLINK=1
 		export CCACHE_UMASK="002"
-	fi
-	if [ "$(type -p emerge)" ] ; then
-		alias ee='emerge -v'
-		alias eea='ee -a'
-		alias eec='eea -C'
-		alias eeC='eea --depclean'
-		alias eef='eea -fO'
-		alias ee1='eea -1'
-		alias eew='eea -uDN world'
-		alias eewp='eew -p'
 	fi
 	if [ "$(type -p eix)" ] ; then
 		alias eixx='type -p layman >/dev/null && layman -S ; eix-sync -v'
@@ -275,8 +274,10 @@ if [ "$(type -p tput)" ] ; then
 fi
 [ "$(id -u)" -ne 0 ] && [ -n "$(type -p last)" ] && last -5
 
+unset i
+
 [ -r "${HOME}/.bashrc.local" ] && source "${HOME}/.bashrc.local"
 [ "${TERM}" == "xterm" ] && [ "$(id -u)" -ne 0 ] && [ "$(type -t sr)" ] && sr
 
-fi
+fi # [ "${PS1}" ]
 
