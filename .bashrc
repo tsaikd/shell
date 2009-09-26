@@ -2,6 +2,9 @@
 
 if [ "${PS1}" ] ; then # this line is used for sftp login
 
+bind '"\x1b\x5b\x41":history-search-backward'
+bind '"\x1b\x5b\x42":history-search-forward'
+
 [ "$(type -p distcc)" ] && export PATH="/usr/lib/distcc/bin:${PATH}"
 if [ "$(type -p ccache)" ] ; then
 	if [ -d "/usr/lib/ccache/bin" ] ; then
@@ -59,9 +62,6 @@ PS1_DIR=' \[\e[01;34;40m\]\w\[\e[m\]'
 PS1_TAIL='\[\e[m\] $ '
 PS1_EVAL='${PS1_HOST}${PS1_USER}${PS1_DIR}${PS1_GIT}${PS1_TAIL}'
 eval PS1="${PS1_EVAL}"
-
-bind '"\x1b\x5b\x41":history-search-backward' 
-bind '"\x1b\x5b\x42":history-search-forward'
 
 if [ "$(type -p locale)" ] ; then
 	localelist="$(locale -a)"
