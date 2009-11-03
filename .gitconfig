@@ -11,6 +11,7 @@
 	st = status
 	ui = update-server-info
 	llog = log --graph --decorate --all
+	po = push origin
 	pom = push origin master:refs/heads/master
 	reba = rebase --abort
 	rebc = rebase --continue
