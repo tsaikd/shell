@@ -15,6 +15,9 @@
 	pom = push origin master:refs/heads/master
 	reba = rebase --abort
 	rebc = rebase --continue
+	sm = submodule
+	sf = submodule foreach
+	sfst = submodule foreach (git st || true)
 [core]
 	compression = 9
 [color]
