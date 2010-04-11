@@ -262,16 +262,6 @@ if [ "$(id -u)" -eq 0 ] ; then
 	}
 fi
 
-# $1 := public key file path
-# $2 := remote host ([user@]host.ip[:sshport])
-function ssh_send_authpubkey() {
-	if [ $# -ne 2 ] ; then
-		echo "Usage: ${FUNCNAME} <KEYFILE> <HOST>"
-	else
-		cat "${1}" | ssh "${2}" 'cat >> ~/.ssh/authorized_keys'
-	fi
-}
-
 if [ "$(type -p tput)" ] ; then
 	[ "$(tput cols)" -lt 80 ] && echo "The screen columns are smaller then 80!"
 	[ "$(tput lines)" -lt 24 ] && echo "The screen lines are smaller then 24!"
