@@ -167,7 +167,7 @@ alias ssht='ssh tsaikd@home.tsaikd.org'
 [ "$(type -p diff)" ] && \
 	alias diff='diff -ruNp'
 [ "$(type -p rsync)" ] && [ "$(type -p ssh)" ] && \
-	alias rscp='rsync -v -v -P -e ssh'
+	alias rscp='rsync -v -v -z -P -e ssh'
 [ "$(type -p mail)" ] && \
 	alias mail='mail -u `\whoami`'
 [ "$(type -p svn)" ] && \
