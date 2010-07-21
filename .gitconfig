@@ -20,8 +20,8 @@
 	sm = submodule
 	smst = submodule status
 	smup = submodule update --init --recursive
-	sf = submodule foreach
-	sfst = submodule foreach (git st || true)
+	sf = submodule foreach --recursive
+	sfst = submodule foreach --recursive (git st || true)
 [core]
 	compression = 9
 [color]
