@@ -20,6 +20,8 @@ export PATH="${PATH}:${HOME}/script:${HOME}/bin"
 export LANG="C"
 unset LANGUAGE
 export LESSHISTFILE="-"
+export HISTFILESIZE=50000
+export HISTSIZE=10000
 export KD_PUBLIC_PC=1
 [ "$(type -p vim)" ] && true ${EDITOR:=vim}
 export EDITOR
