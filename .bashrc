@@ -189,7 +189,7 @@ alias ssht='ssh tsaikd@home.tsaikd.org'
 [ "$(type -p rdesktop)" ] && \
 	alias rdesktop='rdesktop -a 16 -P -f -z'
 [ "$(type -p gitk)" ] && \
-	alias gitk='gitk --all &'
+	alias gitk='gitk --all --date-order &'
 [ "$(type -p mc)" ] && [ "$TERM" == "screen" ] && \
 	alias mc='mc -a'
 [ -z "$(type -p host)" ] && [ "$(type -p links)" ] && \
