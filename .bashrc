@@ -99,20 +99,6 @@ fi
 #	screen -X eval "screen -t \"$1\" $3 bbsbot $USERNAME \"$2\"" "encoding big5 utf8"
 }
 
-if [ "$(type -p emerge)" ] ; then
-	alias eei='emerge --info'
-	if [ "$(id -u)" -eq 0 ] ; then
-		alias ee='emerge -v'
-		alias eea='ee -a'
-		alias eec='eea -C'
-		alias eeC='eea --depclean'
-		alias eef='eea -fO'
-		alias ee1='eea -1'
-		alias eew='eea -uDN world'
-		alias eewp='eew -p'
-	fi
-fi
-
 lshelp="$(ls --help)"
 lsopt="-F"
 if [ "$(uname)" == "FreeBSD" ] ; then
@@ -136,23 +122,13 @@ alias cd..='cd ..'
 alias cp='cp -i'
 alias df='df -h -x supermount'
 alias du='du -h'
-alias fuser='fuser -muv'
 alias md='mkdir'
 alias mv='mv -i'
 alias ping='ping -n'
 alias rd='rmdir'
 alias rm='rm -i'
 alias tar='nice -n 19 tar'
-alias telnet='telnet -8'
-alias sdiff='sdiff -s -w 80'
 alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec clear'
-
-alias sshg='ssh tsaikd@goodguy.csie.ncku.edu.tw'
-alias ssht='ssh tsaikd@home.tsaikd.org'
-[ "$(type -p rdesktop)" ] && \
-	alias rdt='rdesktop home.tsaikd.org $(cat "${HOME}/.rdesktop/password" 2>/dev/null)' && \
-	alias rdtsl='rdt -r sound:local -x lan' && \
-	alias rdtsr='rdt -r sound:remote'
 
 [ "$(type -p readlink)" ] && \
 	alias cd.='cd "$(readlink -f .)"'
@@ -162,14 +138,18 @@ alias ssht='ssh tsaikd@home.tsaikd.org'
 	alias vi='vim'
 [ "$(type -p perl)" ] && \
 	alias col='perl -e "while (<>) { s/\033\[[\d;]*[mH]//g; print; }" | col'
-[ "$(type -p reboot)" ] && \
-	alias reboot='sync;sync;sync;sync;sync;sync;sleep 1; exec /sbin/reboot'
 [ "$(type -p colordiff)" ] && \
 	alias diff='colordiff'
 [ "$(type -p diff)" ] && \
 	alias diff='diff -ruNp'
+[ "$(type -p sdiff)" ] && \
+	alias sdiff='sdiff -s -w 80'
 [ "$(type -p rsync)" ] && [ "$(type -p ssh)" ] && \
 	alias rscp='rsync -v -v -z -P -e ssh'
+[ "$(type -p telnet)" ] && \
+	alias telnet='telnet -8'
+[ "$(type -p fuser)" ] && \
+	alias fuser='fuser -muv'
 [ "$(type -p mail)" ] && \
 	alias mail='mail -u `\whoami`'
 [ "$(type -p svn)" ] && \
@@ -182,12 +162,8 @@ alias ssht='ssh tsaikd@home.tsaikd.org'
 	alias mkisofs='mkisofs -l -r -J'
 [ "$(type -p irssi)" ] && [ "$TERM" == "screen" ] && \
 	alias irssi='screen -t IRC 10 irssi'
-[ "$(type -p azureus)" ] && [ "$TERM" == "screen" ] && \
-	alias bt='screen -X eval "screen -t BT 20 azureus"'
 [ "$(type -p cscope)" ] && \
 	alias csc='cscope -bR'
-[ "$(type -p rdesktop)" ] && \
-	alias rdesktop='rdesktop -a 16 -P -f -z'
 [ "$(type -p gitk)" ] && \
 	alias gitk='gitk --all --date-order &'
 [ "$(type -p mc)" ] && [ "$TERM" == "screen" ] && \
@@ -197,6 +173,16 @@ alias ssht='ssh tsaikd@home.tsaikd.org'
 if [ "$(type -p rtorrent)" ] && [ "$TERM" == "screen" ] ; then
 	alias btr='screen -X eval "screen -t BT 6 rt"'
 	alias btrr='screen -X eval "screen -t BT2 7 rt -r"'
+fi
+if [ "$(type -p rdesktop)" ] ; then
+	alias rdesktop='rdesktop -a 16 -P -f -z'
+	alias rdt='rdesktop home.tsaikd.org $(cat "${HOME}/.rdesktop/password" 2>/dev/null)'
+	alias rdtsl='rdt -r sound:local -x lan'
+	alias rdtsr='rdt -r sound:remote'
+fi
+if [ "$(type -p ssh)" ] ; then
+	alias sshg='ssh tsaikd@goodguy.csie.ncku.edu.tw'
+	alias ssht='ssh tsaikd@home.tsaikd.org'
 fi
 if [ "$(type -t fun_bbs_bot)" ] ; then
 	alias bbot_tsaikd='fun_bbs_bot "KD BBS" tsaikd 8'
@@ -219,11 +205,6 @@ if [ "$(type -t fun_bbs_bot)" ] ; then
 #	alias bbot_moon='fun_bbs_bot "MoonStar" moonstar.twbbs.org 0 Tsaikd'
 fi
 
-# only in gentoo
-if [ "$(uname -r | grep "^2\.[46]\.[0-9]\+-gentoo\(-r[0-9]\+\)\?$")" ] ; then
-	[ -z "$(type -p dig)" ] && alias dig='echo "Please emerge \"net-dns/bind-tools\" for dig"'
-fi
-
 i="/var/log/messages"
 [ -r "${i}" ] && alias cmesg="tail -n 20 \"${i}\""
 i="/var/log/syslog"
@@ -235,7 +216,31 @@ i="/var/log/apache2/access.log"
 i="/var/log/apache2/error.log"
 [ -r "${i}" ] && alias capacheerror="tail -n 20 \"${i}\""
 
-if [ "$(id -u)" -eq 0 ] ; then
+if [ "$(type -p emerge)" ] ; then
+	alias eei='emerge --info'
+	if [ "$(id -u)" -eq 0 ] ; then
+		alias ee='emerge -v'
+		alias eea='ee -a'
+		alias eec='eea -C'
+		alias eeC='eea --depclean'
+		alias eef='eea -fO'
+		alias ee1='eea -1'
+		alias eew='eea -uDN world'
+		alias eewp='eew -p'
+	fi
+fi
+
+if [ "$(id -u)" -ne 0 ] ; then
+	[ "$(type -p reboot)" ] && \
+		alias reboot='exec sudo reboot'
+	[ "$(type -p halt)" ] && \
+		alias halt='exec sudo halt'
+else
+	[ "$(type -p reboot)" ] && \
+		alias reboot='exec reboot'
+	[ "$(type -p halt)" ] && \
+		alias halt='exec halt'
+
 	i="/root/script/config/general.sh"
 	[ -w "${i}" ] && alias viconf="vi \"${i}\""
 	if [ "$(type -p ccache)" ] ; then
