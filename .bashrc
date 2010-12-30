@@ -67,10 +67,16 @@ eval PS1="${PS1_EVAL}"
 
 if [ "$(type -p locale)" ] ; then
 	localelist="$(locale -a)"
-	if [ "$(grep -i "zh_TW.utf" <<<"${localelist}")" ] ; then
-		export LANG="$(grep -i "zh_TW.utf" <<<"${localelist}")"
-	elif [ "$(grep -i "en_US.utf" <<<"${localelist}")" ] ; then
-		export LANG="$(grep -i "en_US.utf" <<<"${localelist}")"
+	if [ "${TERM}" == "linux" ] ; then
+		if [ "$(grep -i "en_US.utf" <<<"${localelist}")" ] ; then
+			export LANG="$(grep -i "en_US.utf" <<<"${localelist}")"
+		fi
+	else
+		if [ "$(grep -i "zh_TW.utf" <<<"${localelist}")" ] ; then
+			export LANG="$(grep -i "zh_TW.utf" <<<"${localelist}")"
+		elif [ "$(grep -i "en_US.utf" <<<"${localelist}")" ] ; then
+			export LANG="$(grep -i "en_US.utf" <<<"${localelist}")"
+		fi
 	fi
 	unset localelist
 fi
