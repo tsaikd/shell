@@ -6,7 +6,7 @@ PD="${BASH_SOURCE[0]%/*}"
 pushd "${PD}" &>/dev/null
 echo "Setup rc files ..."
 for i in .bash_logout .bashrc .screenrc .toprc .vimrc ; do
-	cp -f "${i}" "${HOME}"
+	cp -af "${i}" "${HOME}"
 done
 
 f="/usr/share/vim/vim72/syntax/doxygen.vim"
@@ -22,6 +22,10 @@ if [ -f "${f}" ] ; then
 	popd &>/dev/null
 fi
 
-diff -ruNp .gitconfig "${HOME}"
+if [ -e "${HOME}/.gitconfig" ] ; then
+	diff -ruNp .gitconfig "${HOME}"
+else
+	cp -a .gitconfig "${HOME}"
+fi
 popd &>/dev/null
 
