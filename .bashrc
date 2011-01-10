@@ -2,30 +2,24 @@
 
 if [ "${PS1}" ] ; then # this line is used for sftp login
 
-bind '"\x1b\x5b\x41":history-search-backward'
-bind '"\x1b\x5b\x42":history-search-forward'
+# path control functions
+function pathadd() {
+	local i
+	for i in "$@" ; do
+		if [ -z "$(grep ":${i}:" <<< ":${PATH}:")" ] ; then
+			export PATH="${PATH}:${i}"
+		fi
+	done
+}
 
-[ "$(type -p distcc)" ] && export PATH="/usr/lib/distcc/bin:${PATH}"
-if [ "$(type -p ccache)" ] ; then
-	if [ -d "/usr/lib/ccache/bin" ] ; then
-		export PATH="/usr/lib/ccache/bin:${PATH}"
-	elif [ -x "/usr/lib/ccache/gcc" ] ; then
-		export PATH="/usr/lib/ccache:${PATH}"
-	else
-		echo "ccache detected, but unknown path!!"
-	fi
-fi
-
-export PATH="${PATH}:${HOME}/script:${HOME}/bin"
-export LANG="C"
-unset LANGUAGE
-export LESSHISTFILE="-"
-export HISTFILESIZE=50000
-export HISTSIZE=10000
-export KD_PUBLIC_PC=1
-[ "$(type -p vim)" ] && true ${EDITOR:=vim}
-export EDITOR
-umask 022
+function pathins() {
+	local i
+	for i in "$@" ; do
+		if [ -z "$(grep ":${i}:" <<< ":${PATH}:")" ] ; then
+			export PATH="${i}:${PATH}"
+		fi
+	done
+}
 
 # load bach complation
 function lbcomp() {
@@ -54,6 +48,35 @@ function lbcomp() {
 	eval PS1="${PS1_EVAL}"
 }
 
+bind '"\x1b\x5b\x41":history-search-backward'
+bind '"\x1b\x5b\x42":history-search-forward'
+
+# setup path info
+pathadd "/sbin" "/usr/sbin" "/usr/local/sbin" \
+	"/bin" "/usr/bin" "/usr/local/bin" \
+	"${HOME}/bin" "${HOME}/script"
+[ "$(type -p distcc)" ] && pathins "/usr/lib/distcc/bin"
+if [ "$(type -p ccache)" ] ; then
+	if [ -d "/usr/lib/ccache/bin" ] ; then
+		pathins "/usr/lib/ccache/bin"
+	elif [ -x "/usr/lib/ccache/gcc" ] ; then
+		pathins "/usr/lib/ccache"
+	else
+		echo "ccache detected, but unknown path!!"
+	fi
+fi
+
+export LANG="C"
+unset LANGUAGE
+export LESSHISTFILE="-"
+export HISTFILESIZE=50000
+export HISTSIZE=10000
+export KD_PUBLIC_PC=1
+[ "$(type -p vim)" ] && true ${EDITOR:=vim}
+export EDITOR
+umask 022
+
+# setup prompt
 PS1_HOST='\[\e[01;31m\]\h'
 if [ "$(id -u)" -ne 0 ] ; then
 	PS1_USER=' \[\e[01;32m\]\u'
@@ -65,13 +88,14 @@ PS1_TAIL='\[\e[m\] $ '
 PS1_EVAL='${PS1_HOST}${PS1_USER}${PS1_DIR}${PS1_GIT}${PS1_TAIL}'
 eval PS1="${PS1_EVAL}"
 
+# setup default language
 if [ "$(type -p locale)" ] ; then
 	localelist="$(locale -a)"
-	if [ "${TERM}" == "linux" ] ; then
+	if [ "${TERM}" == "linux" ] ; then # default language for console
 		if [ "$(grep -i "en_US.utf" <<<"${localelist}")" ] ; then
 			export LANG="$(grep -i "en_US.utf" <<<"${localelist}")"
 		fi
-	else
+	else # default language for others
 		if [ "$(grep -i "zh_TW.utf" <<<"${localelist}")" ] ; then
 			export LANG="$(grep -i "zh_TW.utf" <<<"${localelist}")"
 		elif [ "$(grep -i "en_US.utf" <<<"${localelist}")" ] ; then
