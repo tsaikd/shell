@@ -113,7 +113,7 @@ fi
 }
 
 [ "$(type -p wget)" ] && function myip () {
-	wget "http://whatismyip.org/" -qO /dev/stdout
+	wget -qO /dev/stdout "http://www.whatismyip.com.tw" | perl -ane 's/h2[^0-9]+([0-9.]+)/print $1/e'
 	echo
 }
 
