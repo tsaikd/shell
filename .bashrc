@@ -117,6 +117,10 @@ fi
 	echo
 }
 
+[ "$(type -p wget)" ] && [ "$(type -p tar)" ] && function kd_get_bash () {
+	wget 'http://www.tsaikd.org/git/?p=bash.git;a=snapshot;h=refs/heads/master;sf=tbz2' -O - | tar xjf -
+}
+
 # $1 : title
 # $2 : bbs site url
 # $3 : screen number
@@ -287,16 +291,6 @@ else
 			hwclock -w
 		}
 	fi
-	function swapre() {
-		swapoff "$@"
-		swapon "$@"
-	}
-	function kd_port_kdbashlib() {
-		cd /usr/portage/app-shells
-		wget -m -nH --cut-dirs=3 -p -l 2 \
-			http://svn.tsaikd.org/gentoo/kdport/app-shells/kdbashlib/
-		find -iname "index.htm*" -delete ; cd - >/dev/null
-	}
 fi
 
 if [ "$(type -p tput)" ] ; then
