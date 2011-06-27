@@ -9,6 +9,10 @@ for i in .bash_logout .bashrc .screenrc .toprc .vimrc ; do
 	cp -af "${i}" "${HOME}"
 done
 
+if [ ! -f "${HOME}/.profile" ] && [ ! -f "${HOME}/.bash_profile" ] ; then
+	ln -s "${HOME}/.bashrc" "${HOME}/.bash_profile"
+fi
+
 f="/usr/share/vim/vim72/syntax/doxygen.vim"
 d="${HOME}/.vim/after/syntax"
 if [ -f "${f}" ] ; then
