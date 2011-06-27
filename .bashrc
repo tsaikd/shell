@@ -118,7 +118,7 @@ fi
 }
 
 [ "$(type -p wget)" ] && [ "$(type -p tar)" ] && function kd_get_bash () {
-	wget 'http://www.tsaikd.org/git/?p=bash.git;a=snapshot;h=refs/heads/master;sf=tbz2' -O - | tar xjf -
+	wget --no-cache 'http://www.tsaikd.org/git/?p=bash.git;a=snapshot;h=refs/heads/master;sf=tbz2' -O - | tar xjf -
 }
 
 # $1 : title
@@ -167,7 +167,7 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 [ "$(type -p readlink)" ] && \
 	alias cd.='cd "$(readlink -f .)"'
 [ "$(type -p sudo)" ] && \
-	alias ssu='sudo su'
+	alias ssu='sudo su -c "bash --rcfile \"${HOME}/.bashrc\""'
 [ "$(type -p vim)" ] && \
 	alias vi='vim'
 [ "$(type -p perl)" ] && \
@@ -190,8 +190,6 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 	alias sla='svn log -r 1:HEAD'
 [ "$(type -p htop)" ] && \
 	alias top='htop'
-[ "$(type -p mutt)" ] && \
-	alias mutt='LANG="zh_TW.utf8" mutt'
 [ "$(type -p mkisofs)" ] && \
 	alias mkisofs='mkisofs -l -r -J'
 [ "$(type -p irssi)" ] && [ "$TERM" == "screen" ] && \
@@ -204,18 +202,7 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 	alias mc='mc -a'
 [ -z "$(type -p host)" ] && [ "$(type -p links)" ] && \
 	alias host='links -lookup'
-if [ "$(type -p rtorrent)" ] && [ "$TERM" == "screen" ] ; then
-	alias btr='screen -X eval "screen -t BT 6 rt"'
-	alias btrr='screen -X eval "screen -t BT2 7 rt -r"'
-fi
-if [ "$(type -p rdesktop)" ] ; then
-	alias rdesktop='rdesktop -a 16 -P -f -z'
-	alias rdt='rdesktop home.tsaikd.org $(cat "${HOME}/.rdesktop/password" 2>/dev/null)'
-	alias rdtsl='rdt -r sound:local -x lan'
-	alias rdtsr='rdt -r sound:remote'
-fi
 if [ "$(type -p ssh)" ] ; then
-	alias sshg='ssh tsaikd@goodguy.csie.ncku.edu.tw'
 	alias ssht='ssh tsaikd@home.tsaikd.org'
 fi
 if [ "$(type -t fun_bbs_bot)" ] ; then
@@ -243,13 +230,8 @@ i="/var/log/messages"
 [ -r "${i}" ] && alias cmesg="tail -n 20 \"${i}\""
 i="/var/log/syslog"
 [ -r "${i}" ] && alias csyslog="tail -n 20 \"${i}\""
-i="/var/log/syslog"
-[ -r "${i}" ] && alias csyslog="tail -n 20 \"${i}\""
-i="/var/log/apache2/access.log"
-[ -r "${i}" ] && alias capacheaccess="tail -n 20 \"${i}\""
-i="/var/log/apache2/error.log"
-[ -r "${i}" ] && alias capacheerror="tail -n 20 \"${i}\""
 
+# gentoo
 if [ "$(type -p emerge)" ] ; then
 	alias eei='emerge --info'
 	if [ "$(id -u)" -eq 0 ] ; then
@@ -261,6 +243,12 @@ if [ "$(type -p emerge)" ] ; then
 		alias ee1='eea -1'
 		alias eew='eea -uDN world'
 		alias eewp='eew -p'
+	fi
+
+	if [ "$(id -u)" -eq 0 ] ; then
+		if [ "$(type -p eix)" ] ; then
+			alias eixx='type -p layman >/dev/null && layman -S ; eix-sync -v'
+		fi
 	fi
 fi
 
@@ -282,9 +270,6 @@ else
 		export CCACHE_NOLINK=1
 		export CCACHE_UMASK="002"
 	fi
-	if [ "$(type -p eix)" ] ; then
-		alias eixx='type -p layman >/dev/null && layman -S ; eix-sync -v'
-	fi
 	if [ "$(type -p ntpdate)" ] ; then
 		function ntpdate() {
 			$(type -P ntpdate) "$@" time.stdtime.gov.tw
@@ -298,6 +283,12 @@ if [ "$(type -p tput)" ] ; then
 	[ "$(tput lines)" -lt 24 ] && echo "The screen lines are smaller then 24!"
 fi
 [ "$(id -u)" -ne 0 ] && [ -n "$(type -p last)" ] && last -5
+
+if [ -d "${HOME}/.bash.d" ] ; then
+	for i in "${HOME}/.bash.d/"* ; do
+		source "${i}"
+	done
+fi
 
 unset i
 
