@@ -258,6 +258,7 @@ if [ "$(id -u)" -ne 0 ] ; then
 	[ "$(type -p halt)" ] && \
 		alias halt='exec sudo halt'
 else
+	pathadd "${HOME}/script/sbin"
 	[ "$(type -p reboot)" ] && \
 		alias reboot='exec reboot'
 	[ "$(type -p halt)" ] && \
