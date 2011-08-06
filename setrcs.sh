@@ -5,13 +5,18 @@ PD="${BASH_SOURCE[0]%/*}"
 
 pushd "${PD}" &>/dev/null
 echo "Setup rc files ..."
-for i in .bash_logout .bashrc .screenrc .toprc .vimrc ; do
+if [ "$(id -u)" -ne 0 ] ; then
+	for i in .bash_logout .bashrc .screenrc ; do
+		cp -af "${i}" "${HOME}"
+	done
+
+	if [ ! -f "${HOME}/.profile" ] && [ ! -f "${HOME}/.bash_profile" ] ; then
+		ln -s "${HOME}/.bashrc" "${HOME}/.bash_profile"
+	fi
+fi
+for i in .toprc .vimrc ; do
 	cp -af "${i}" "${HOME}"
 done
-
-if [ ! -f "${HOME}/.profile" ] && [ ! -f "${HOME}/.bash_profile" ] ; then
-	ln -s "${HOME}/.bashrc" "${HOME}/.bash_profile"
-fi
 
 f="/usr/share/vim/vim72/syntax/doxygen.vim"
 d="${HOME}/.vim/after/syntax"
