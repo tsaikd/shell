@@ -22,6 +22,8 @@
 	smup = submodule update --init --recursive
 	sf = submodule foreach --recursive
 	sfst = submodule foreach --recursive (git st || true)
+[branch]
+	autosetuprebase = always
 [core]
 	compression = 9
 [color]
