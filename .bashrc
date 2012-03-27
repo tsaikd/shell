@@ -76,6 +76,9 @@ export KD_PUBLIC_PC=1
 export EDITOR
 umask 022
 
+# screen prompt
+PROMPT_COMMAND='echo -ne "\033]0;${PWD:$(( (${#PWD}-45) >= 0 ? (${#PWD}-45) : 0 ))}\007"'
+
 # setup prompt
 PS1_HOST='\[\e[01;31m\]\h'
 if [ "$(id -u)" -ne 0 ] ; then
