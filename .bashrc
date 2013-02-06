@@ -66,6 +66,9 @@ if [ "$(type -p ccache)" ] ; then
 	fi
 fi
 
+for i in $(set | grep ^LC_ | cut -f1 -d=) ; do
+	unset "${i}"
+done
 export LANG="C"
 unset LANGUAGE
 export LESSHISTFILE="-"
@@ -207,6 +210,12 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 	alias host='links -lookup'
 if [ "$(type -p ssh)" ] ; then
 	alias ssht='ssh tsaikd@home.tsaikd.org'
+fi
+if [ "$(type -t btrfs)" ] ; then
+	alias btv='btrfs subvolume'
+	alias btf='btrfs filesystem'
+	alias btd='btrfs device'
+	alias bts='btf show'
 fi
 if [ "$(type -t fun_bbs_bot)" ] ; then
 	alias bbot_tsaikd='fun_bbs_bot "KD BBS" tsaikd 8'
