@@ -268,13 +268,15 @@ if [ "$(id -u)" -ne 0 ] ; then
 	[ "$(type -p reboot)" ] && \
 		alias reboot='exec sudo reboot'
 	[ "$(type -p halt)" ] && \
-		alias halt='exec sudo halt'
+	[ "$(type -p poweroff)" ] && \
+		alias halt='exec sudo poweroff'
 else
 	pathadd "${HOME}/script/sbin"
 	[ "$(type -p reboot)" ] && \
 		alias reboot='exec reboot'
 	[ "$(type -p halt)" ] && \
-		alias halt='exec halt'
+	[ "$(type -p poweroff)" ] && \
+		alias halt='exec poweroff'
 
 	i="/root/script/config/general.sh"
 	[ -w "${i}" ] && alias viconf="vi \"${i}\""
