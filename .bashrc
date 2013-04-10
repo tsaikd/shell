@@ -278,6 +278,11 @@ else
 	[ "$(type -p poweroff)" ] && \
 		alias halt='exec poweroff'
 
+	if [ "$(type -p zfs)" ] ; then
+		alias zfl='zfs list -t filesystem'
+		alias zfls='zfs list -t filesystem,snapshot'
+	fi
+
 	i="/root/script/config/general.sh"
 	[ -w "${i}" ] && alias viconf="vi \"${i}\""
 	if [ "$(type -p ccache)" ] ; then
