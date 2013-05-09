@@ -247,7 +247,36 @@ else
 		alias zfls='zfs list -t filesystem,snapshot'
 	fi
 	if [ "$(type -p virsh)" ] ; then
+		alias vm='virsh'
 		alias vls='virsh list --all'
+		function _virsh() {
+			local cur=${COMP_WORDS[COMP_CWORD]}
+			if [ "${COMP_CWORD}" -eq 1 ] ; then
+				COMPREPLY=( $( compgen -W "list define undefine edit start destroy" -- ${cur} ) )
+				return
+			elif [ "${COMP_CWORD}" -eq 2 ] ; then
+				case "${COMP_WORDS[1]}" in
+				list)
+					COMPREPLY=( $( compgen -W "--all" -- ${cur} ) )
+					return
+					;;
+				start)
+					COMPREPLY=( $( compgen -W "$(virsh list --all | grep "shut off" | awk '{print $2}')" -- ${cur} ) )
+					return
+					;;
+				destroy)
+					COMPREPLY=( $( compgen -W "$(virsh list --all | grep "running" | awk '{print $2}')" -- ${cur} ) )
+					return
+					;;
+				edit)
+					COMPREPLY=( $( compgen -W "$(virsh list --all | sed '1,2d;$d' | awk '{print $2}')" -- ${cur} ) )
+					return
+					;;
+				esac
+			fi
+		}
+		complete -F _virsh -o default virsh
+		complete -F _virsh -o default vm
 	fi
 
 	i="/root/script/config/general.sh"
