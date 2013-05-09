@@ -127,18 +127,6 @@ fi
 	wget --no-cache 'http://www.tsaikd.org/git/?p=bash.git;a=snapshot;h=refs/heads/master;sf=tbz2' -O - | tar xjf -
 }
 
-# $1 : title
-# $2 : bbs site url
-# $3 : screen number
-# $4 : login name (default `whoami`)
-[ "$(type -p bbsbot)" ] && [ "${TERM}" == "screen" ] && function fun_bbs_bot () {
-	[ $# -lt 3 ] && return 1
-	local USERNAME
-	[ "$4" ] && USERNAME="$4" || USERNAME="$(whoami)"
-	screen -X eval "screen -t \"$1\" $3 /usr/bin/kd_bbsbot.py \"$2\"" "encoding big5 utf8"
-#	screen -X eval "screen -t \"$1\" $3 bbsbot $USERNAME \"$2\"" "encoding big5 utf8"
-}
-
 lshelp="$(ls --help)"
 lsopt="-F"
 if [ "$(uname)" == "FreeBSD" ] ; then
@@ -192,8 +180,6 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 	alias fuser='fuser -muv'
 [ "$(type -p mail)" ] && \
 	alias mail='mail -u `\whoami`'
-[ "$(type -p svn)" ] && \
-	alias sla='svn log -r 1:HEAD'
 [ "$(type -p htop)" ] && \
 	alias top='htop'
 [ "$(type -p mkisofs)" ] && \
@@ -210,32 +196,6 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 	alias host='links -lookup'
 if [ "$(type -p ssh)" ] ; then
 	alias ssht='ssh tsaikd@home.tsaikd.org'
-fi
-if [ "$(type -t btrfs)" ] ; then
-	alias btv='btrfs subvolume'
-	alias btf='btrfs filesystem'
-	alias btd='btrfs device'
-	alias bts='btf show'
-fi
-if [ "$(type -t fun_bbs_bot)" ] ; then
-	alias bbot_tsaikd='fun_bbs_bot "KD BBS" tsaikd 8'
-#	alias bbot_tsaikd='fun_bbs_bot "KD BBS" bbs.tsaikd.twbbs.org 8'
-	alias bbot_goodguy='fun_bbs_bot "GoodGuy" goodguy 9'
-#	alias bbot_goodguy='fun_bbs_bot "GoodGuy" goodguy.csie.ncku.edu.tw 9'
-	alias bbot_dorm='fun_bbs_bot "Dorm" dorm 0'
-#	alias bbot_dorm='fun_bbs_bot "Dorm" bbs.ccns.ncku.edu.tw 0'
-	alias bbot_bahamut='fun_bbs_bot "BaHa" baha 0'
-#	alias bbot_bahamut='fun_bbs_bot "BaHa" bahamut.twbbs.org 0'
-	alias bbot_rical='fun_bbs_bot "Rical" rical 0'
-#	alias bbot_rical='fun_bbs_bot "Rical" rical.twbbs.org 0'
-	alias bbot_qazq='fun_bbs_bot "qazq" qazq 0'
-#	alias bbot_qazq='fun_bbs_bot "qazq" qazq.twbbs.org 0'
-	alias bbot_ptt='fun_bbs_bot "ptt" ptt 0'
-#	alias bbot_ptt='fun_bbs_bot "ptt" ptt.twbbs.org 0'
-	alias bbot_fancy='fun_bbs_bot "fancy" fancy 0'
-#	alias bbot_fancy='fun_bbs_bot "fancy" fancy.twbbs.org 0'
-	alias bbot_moon='fun_bbs_bot "MoonStar" moon 0 Tsaikd'
-#	alias bbot_moon='fun_bbs_bot "MoonStar" moonstar.twbbs.org 0 Tsaikd'
 fi
 
 i="/var/log/messages"
@@ -267,20 +227,27 @@ fi
 if [ "$(id -u)" -ne 0 ] ; then
 	[ "$(type -p reboot)" ] && \
 		alias reboot='exec sudo reboot'
-	[ "$(type -p halt)" ] && \
 	[ "$(type -p poweroff)" ] && \
 		alias halt='exec sudo poweroff'
 else
 	pathadd "${HOME}/script/sbin"
 	[ "$(type -p reboot)" ] && \
 		alias reboot='exec reboot'
-	[ "$(type -p halt)" ] && \
 	[ "$(type -p poweroff)" ] && \
 		alias halt='exec poweroff'
 
+	if [ "$(type -t btrfs)" ] ; then
+		alias btv='btrfs subvolume'
+		alias btf='btrfs filesystem'
+		alias btd='btrfs device'
+		alias bts='btf show'
+	fi
 	if [ "$(type -p zfs)" ] ; then
 		alias zfl='zfs list -t filesystem'
 		alias zfls='zfs list -t filesystem,snapshot'
+	fi
+	if [ "$(type -p virsh)" ] ; then
+		alias vls='virsh list --all'
 	fi
 
 	i="/root/script/config/general.sh"
@@ -289,12 +256,6 @@ else
 		export CCACHE_DIR="/var/tmp/ccache"
 		export CCACHE_NOLINK=1
 		export CCACHE_UMASK="002"
-	fi
-	if [ "$(type -p ntpdate)" ] ; then
-		function ntpdate() {
-			$(type -P ntpdate) "$@" time.stdtime.gov.tw
-			hwclock -w
-		}
 	fi
 fi
 
