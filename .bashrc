@@ -203,6 +203,17 @@ i="/var/log/messages"
 i="/var/log/syslog"
 [ -r "${i}" ] && alias csyslog="tail -n 20 \"${i}\""
 
+if [ "$(type -p qemu-img)" ] ; then
+	function _qemu_img() {
+		local cur=${COMP_WORDS[COMP_CWORD]}
+		if [ "${COMP_CWORD}" -eq 1 ] ; then
+			COMPREPLY=( $( compgen -W "create convert info" -- ${cur} ) )
+			return
+		fi
+	}
+	complete -F _qemu_img -o default qemu-img
+fi
+
 # gentoo
 if [ "$(type -p emerge)" ] ; then
 	alias eei='emerge --info'
@@ -244,35 +255,106 @@ else
 	fi
 	if [ "$(type -p zfs)" ] ; then
 		alias zfl='zfs list -t filesystem'
-		alias zfls='zfs list -t filesystem,snapshot'
+		alias zfls='zfs list -t filesystem,snapshot,volume'
+		function _zfs() {
+			local cur=${COMP_WORDS[COMP_CWORD]}
+			local reply=""
+			local prev
+			if [ "${COMP_CWORD}" -eq 1 ] ; then
+				reply="create destroy list set get inherit mount unmount send receive"
+			elif [ "${COMP_CWORD}" -eq 2 ] ; then
+				case "${COMP_WORDS[1]}" in
+				create)		reply="$(zfs list -t filesystem,snapshot,volume | sed '1d' | awk '{print $1}')" ;;
+				destroy)	reply="$(zfs list -t filesystem,snapshot,volume | sed '1d' | awk '{print $1}')" ;;
+				get)		reply="quota mountpoint checksum compression atime dedup all" ;;
+				set)		reply="quota mountpoint checksum compression=lz4 atime=off dedup" ;;
+				inherit)	reply="quota mountpoint checksum compression atime dedup" ;;
+				esac
+			elif [ "${COMP_CWORD}" -eq 3 ] ; then
+				case "${COMP_WORDS[1]}" in
+				get)		reply="$(zfs list -t filesystem,snapshot,volume | sed '1d' | awk '{print $1}')" ;;
+				set)		reply="$(zfs list -t filesystem,snapshot,volume | sed '1d' | awk '{print $1}')" ;;
+				inherit)	reply="$(zfs list -t filesystem,snapshot,volume | sed '1d' | awk '{print $1}')" ;;
+				esac
+			elif [ "${COMP_CWORD}" -gt 3 ] ; then
+				case "${COMP_WORDS[1]}" in
+				set)
+					prev="${COMP_WORDS[$((COMP_CWORD-1))]}"
+					[ "${prev}" == "=" ] && prev="${COMP_WORDS[$((COMP_CWORD-2))]}"
+					case "${prev}" in
+					atime)		reply="on off" ;;
+					compression)	reply="lz4 off" ;;
+					esac
+					;;
+				esac
+			fi
+			if [ "${reply}" ] ; then
+				COMPREPLY=( $( compgen -W "${reply}" -- ${cur} ) )
+			fi
+		}
+		complete -F _zfs -o default zfs
+		function _zpool() {
+			local cur=${COMP_WORDS[COMP_CWORD]}
+			local reply=""
+			local prev
+			if [ "${COMP_CWORD}" -eq 1 ] ; then
+				reply="create destroy list iostat status scrub set get"
+			elif [ "${COMP_CWORD}" -eq 2 ] ; then
+				case "${COMP_WORDS[1]}" in
+				create)		reply="-o" ;;
+				destroy)	reply="$(zpool list | sed '1d' | awk '{print $1}')" ;;
+				get)		reply="listsnapshots autoexpand all" ;;
+				set)		reply="listsnapshots autoexpand" ;;
+				esac
+			elif [ "${COMP_CWORD}" -eq 3 ] ; then
+				case "${COMP_WORDS[1]}" in
+				create)		[ "${COMP_WORDS[2]}" == "-o" ] && reply="autoexpand=on" ;;
+				set)		reply="$(zpool list | sed '1d' | awk '{print $1}')" ;;
+				esac
+			elif [ "${COMP_CWORD}" -gt 3 ] ; then
+				case "${COMP_WORDS[1]}" in
+				create)
+					prev="${COMP_WORDS[$((COMP_CWORD-1))]}"
+					[ "${prev}" == "=" ] && prev="${COMP_WORDS[$((COMP_CWORD-2))]}"
+					case "${prev}" in
+					autoexpand)	reply="on off" ;;
+					esac
+					;;
+				esac
+			fi
+			if [ "${reply}" ] ; then
+				COMPREPLY=( $( compgen -W "${reply}" -- ${cur} ) )
+			fi
+		}
+		complete -F _zpool -o default zpool
 	fi
 	if [ "$(type -p virsh)" ] ; then
 		alias vm='virsh'
 		alias vls='virsh list --all'
 		function _virsh() {
 			local cur=${COMP_WORDS[COMP_CWORD]}
+			local reply=""
 			if [ "${COMP_CWORD}" -eq 1 ] ; then
-				COMPREPLY=( $( compgen -W "list define undefine edit start destroy" -- ${cur} ) )
-				return
+				reply="list define undefine edit start destroy setmem dominfo dumpxml autostart"
 			elif [ "${COMP_CWORD}" -eq 2 ] ; then
 				case "${COMP_WORDS[1]}" in
-				list)
-					COMPREPLY=( $( compgen -W "--all" -- ${cur} ) )
-					return
-					;;
-				start)
-					COMPREPLY=( $( compgen -W "$(virsh list --all | grep "shut off" | awk '{print $2}')" -- ${cur} ) )
-					return
-					;;
-				destroy)
-					COMPREPLY=( $( compgen -W "$(virsh list --all | grep "running" | awk '{print $2}')" -- ${cur} ) )
-					return
-					;;
-				edit)
-					COMPREPLY=( $( compgen -W "$(virsh list --all | sed '1,2d;$d' | awk '{print $2}')" -- ${cur} ) )
-					return
-					;;
+				list)		reply="--all" ;;
+				start)		reply="$(virsh list --all | grep "shut off" | awk '{print $2}')" ;;
+				destroy)	reply="$(virsh list --all | grep "running" | awk '{print $2}')" ;;
+				undefine)	reply="$(virsh list --all | sed '1,2d;$d' | awk '{print $2}')" ;;
+				edit)		reply="$(virsh list --all | sed '1,2d;$d' | awk '{print $2}')" ;;
+				setmem)		reply="$(virsh list --all | sed '1,2d;$d' | awk '{print $2}')" ;;
+				dominfo)	reply="$(virsh list --all | sed '1,2d;$d' | awk '{print $2}')" ;;
+				dumpxml)	reply="$(virsh list --all | sed '1,2d;$d' | awk '{print $2}')" ;;
+				autostart)	reply="$(virsh list --all | sed '1,2d;$d' | awk '{print $2}')" ;;
 				esac
+			elif [ "${COMP_CWORD}" -eq 3 ] ; then
+				case "${COMP_WORDS[1]}" in
+				autostart)	reply="--disable" ;;
+				esac
+			fi
+			if [ "${reply}" ] ; then
+				COMPREPLY=( $( compgen -W "${reply}" -- ${cur} ) )
 			fi
 		}
 		complete -F _virsh -o default virsh
