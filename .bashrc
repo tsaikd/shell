@@ -173,7 +173,7 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 [ "$(type -p sdiff)" ] && \
 	alias sdiff='sdiff -s -w 80'
 [ "$(type -p rsync)" ] && [ "$(type -p ssh)" ] && \
-	alias rscp='rsync -aP -e "ssh -o Ciphers=arcfour"'
+	alias rscp='rsync -aP -e "ssh -oCiphers=arcfour -oStrictHostKeyChecking=no"'
 [ "$(type -p telnet)" ] && \
 	alias telnet='telnet -8'
 [ "$(type -p fuser)" ] && \
@@ -195,6 +195,7 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 [ -z "$(type -p host)" ] && [ "$(type -p links)" ] && \
 	alias host='links -lookup'
 if [ "$(type -p ssh)" ] ; then
+	alias ssh='ssh -oStrictHostKeyChecking=no'
 	alias ssht='ssh tsaikd@home.tsaikd.org'
 fi
 
