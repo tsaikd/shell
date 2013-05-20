@@ -9,6 +9,7 @@
 	cotm = checkout -b master -t origin/master
 	com = checkout origin/master
 	di = diff
+	fe = fetch --all
 	sa = stash
 	st = status
 	ui = update-server-info
