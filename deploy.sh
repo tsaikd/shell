@@ -12,7 +12,7 @@ for i in $@ ; do
 	if [ "${tarhost}" ] ; then
 		echo "deploy to '${tarhost}:${tarport}'"
 		rsync -aPq -e "ssh -p ${tarport} -o Ciphers=arcfour -o StrictHostKeyChecking=no" "${PD}/" "${tarhost}:/tmp/bash/" && \
-			ssh "${tarhost}" -p "${tarport}" "cd /tmp/bash ; /tmp/bash/setrcs.sh ; cd / ; rm -rf /tmp/bash"
+			ssh "${tarhost}" -p "${tarport}" "cd /tmp/bash ; bash /tmp/bash/setrcs.sh ; cd / ; rm -rf /tmp/bash"
 	fi
 done
 

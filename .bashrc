@@ -127,17 +127,17 @@ fi
 	wget --no-cache 'http://www.tsaikd.org/git/?p=bash.git;a=snapshot;h=refs/heads/master;sf=tbz2' -O - | tar xjf -
 }
 
-lshelp="$(ls --help)"
 lsopt="-F"
 if [ "$(uname)" == "FreeBSD" ] ; then
 	lsopt="${lsopt} -G"
 else
+	lshelp="$(ls --help)"
 	lsopt="${lsopt} --color=auto"
+	[ "$(grep -- "--show-control-chars" <<<"${lshelp}")" ] && \
+		lsopt="${lsopt} --show-control-chars"
+	[ "$(grep -- "--group-directories-first" <<<"${lshelp}")" ] && \
+		lsopt="${lsopt} --group-directories-first"
 fi
-[ "$(grep -- "--show-control-chars" <<<"${lshelp}")" ] && \
-	lsopt="${lsopt} --show-control-chars"
-[ "$(grep -- "--group-directories-first" <<<"${lshelp}")" ] && \
-	lsopt="${lsopt} --group-directories-first"
 alias l="ls ${lsopt}"
 alias la='l -a'
 alias l1='l -1'
