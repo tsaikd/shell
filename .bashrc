@@ -130,6 +130,7 @@ fi
 lsopt="-F"
 if [ "$(uname)" == "FreeBSD" ] ; then
 	lsopt="${lsopt} -G"
+	alias df='df -T -h'
 else
 	lshelp="$(ls --help)"
 	lsopt="${lsopt} --color=auto"
@@ -137,6 +138,7 @@ else
 		lsopt="${lsopt} --show-control-chars"
 	[ "$(grep -- "--group-directories-first" <<<"${lshelp}")" ] && \
 		lsopt="${lsopt} --group-directories-first"
+	alias df='df -T -h -x supermount'
 fi
 alias l="ls ${lsopt}"
 alias la='l -a'
@@ -148,7 +150,6 @@ unset lshelp lsopt
 
 alias cd..='cd ..'
 alias cp='cp -i'
-alias df='df -h -x supermount'
 alias du='du -h'
 alias md='mkdir'
 alias mv='mv -i'
