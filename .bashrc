@@ -249,6 +249,22 @@ else
 	[ "$(type -p poweroff)" ] && \
 		alias halt='exec poweroff'
 
+	if [ "$(type -t service)" ] ; then
+		function _service() {
+			local cur=${COMP_WORDS[COMP_CWORD]}
+			local reply=""
+			local prev
+			if [ "${COMP_CWORD}" -eq 1 ] ; then
+				reply="$(ls /etc/init.d/)"
+			elif [ "${COMP_CWORD}" -eq 2 ] ; then
+				reply="status start stop restart reload"
+			fi
+			if [ "${reply}" ] ; then
+				COMPREPLY=( $( compgen -W "${reply}" -- ${cur} ) )
+			fi
+		}
+		complete -F _service -o default service
+	fi
 	if [ "$(type -t btrfs)" ] ; then
 		alias btv='btrfs subvolume'
 		alias btf='btrfs filesystem'
