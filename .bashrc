@@ -77,7 +77,9 @@ export EDITOR
 umask 022
 
 # screen prompt
-PROMPT_COMMAND='echo -ne "\033]0;${PWD:$(( (${#PWD}-45) >= 0 ? (${#PWD}-45) : 0 ))}\007"'
+if [ "${TERM}" == "screen" ] ; then
+	PROMPT_COMMAND='echo -ne "\033]0;${PWD:$(( (${#PWD}-45) >= 0 ? (${#PWD}-45) : 0 ))}\007"'
+fi
 
 # setup prompt
 PS1_HOST='\[\e[01;31m\]\h'
@@ -110,7 +112,7 @@ fi
 
 [ "$(type -p setterm)" ] && TERM=linux setterm -regtabs 4
 
-[ "$(type -p screen)" ] && [ "$TERM" != "screen" ] && function sr() {
+[ "$(type -p screen)" ] && [ "${TERM}" != "screen" ] && function sr() {
 	screen -wipe
 	{ screen -x `whoami` || screen -S `whoami` ; } && clear
 }
