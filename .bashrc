@@ -66,11 +66,8 @@ if [ "$(type -p ccache)" ] ; then
 	fi
 fi
 
-for i in $(set | grep ^LC_ | cut -f1 -d=) ; do
-	unset "${i}"
-done
 export LANG="C"
-unset LANGUAGE
+unset LANGUAGE $(set | grep ^LC_ | cut -f1 -d=)
 export LESSHISTFILE="-"
 export HISTFILESIZE=50000
 export HISTSIZE=10000
