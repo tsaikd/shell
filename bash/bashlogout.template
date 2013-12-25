@@ -1,0 +1,13 @@
+#!/bin/bash
+cd
+
+for i in $(find "${MYSHELL}/custom/bash/logout-before" -type f -iname *.sh) ; do
+    source "${i}"
+done
+
+source "${MYSHELL}/bash/bashlogout.sh"
+
+for i in $(find "${MYSHELL}/custom/bash/logout-post" -type f -iname *.sh) ; do
+    source "${i}"
+done
+

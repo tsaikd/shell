@@ -1,0 +1,20 @@
+#!/bin/bash
+# Path to your my-shell configuration.
+export MYSHELL="${HOME}/.my-shell"
+
+# Uncomment this to disable bi-weekly auto-update checks (default: false)
+# export DISABLE_AUTO_UPDATE="true"
+
+# Uncomment to change how often before auto-updates occur? (in days, default: 13)
+# export UPDATE_SHELL_DAYS=13
+
+for i in $(find "${MYSHELL}/custom/bash/login-before" -type f -iname *.sh) ; do
+	source "${i}"
+done
+
+source "${MYSHELL}/bash/bashrc.sh"
+
+for i in $(find "${MYSHELL}/custom/bash/login-post" -type f -iname *.sh) ; do
+	source "${i}"
+done
+

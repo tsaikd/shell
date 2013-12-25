@@ -1,0 +1,10 @@
+*.swp
+/.last-update
+/custom/*
+!/custom/README.md
+!/custom/bash/
+!/custom/bash/login-before/README.md
+!/custom/bash/login-post/README.md
+!/custom/bash/logout-before/README.md
+!/custom/bash/logout-post/README.md
+

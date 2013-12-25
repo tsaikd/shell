@@ -2,6 +2,10 @@
 
 if [ "${PS1}" ] ; then # this line is used for sftp login
 
+if [ "$DISABLE_AUTO_UPDATE" != "true" ]; then
+	${SHELL} "${MYSHELL}/tools/check_for_upgrade.sh"
+fi
+
 # path control functions
 function pathadd() {
 	local i

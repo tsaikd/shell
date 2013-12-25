@@ -16,5 +16,3 @@ fi
 
 clear
 
-[ -r ".bash_logout.local" ] && source ".bash_logout.local"
-
