@@ -1,6 +1,6 @@
 #!/bin/bash
 # Path to your my-shell configuration.
-export MYSHELL="${HOME}/.my-shell"
+export MYSHELL="${MYSHELL:-${HOME}/.my-shell}"
 
 # Uncomment this to disable bi-weekly auto-update checks (default: false)
 # export DISABLE_AUTO_UPDATE="true"
@@ -8,13 +8,31 @@ export MYSHELL="${HOME}/.my-shell"
 # Uncomment to change how often before auto-updates occur? (in days, default: 13)
 # export UPDATE_SHELL_DAYS=13
 
-for i in $(find "${MYSHELL}/custom/bash/login-before" -type f -iname *.sh) ; do
-	source "${i}"
-done
+# Try to find a valid My Shell folder
+if [ ! -d "${MYSHELL}" ] ; then
+	i="${PWD}/.my-shell"
+	[ -d "${i}" ] && MYSHELL="${i}"
+fi
+if [ ! -d "${MYSHELL}" ] ; then
+	i="$(git rev-parse --show-toplevel 2>/dev/null)"
+	[ -d "${i}" ] && MYSHELL="${i}"
+fi
+
+# load custom script before login
+if [ -d "${MYSHELL}/custom/bash/login-before" ] ; then
+	for i in $(find "${MYSHELL}/custom/bash/login-before" -type f -iname *.sh) ; do
+		source "${i}"
+	done
+fi
 
 source "${MYSHELL}/bash/bashrc.sh"
 
-for i in $(find "${MYSHELL}/custom/bash/login-post" -type f -iname *.sh) ; do
-	source "${i}"
-done
+# load custom script post login
+if [ -d "${MYSHELL}/custom/bash/login-post" ] ; then
+	for i in $(find "${MYSHELL}/custom/bash/login-post" -type f -iname *.sh) ; do
+		source "${i}"
+	done
+fi
+
+unset i
 
