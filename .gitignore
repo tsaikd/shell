@@ -1,5 +1,6 @@
 *.swp
 /.last-update
+/zsh/oh-my-zsh/
 /custom/*
 !/custom/README.md
 !/custom/bash/

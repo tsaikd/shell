@@ -1,0 +1,24 @@
+diff --git a/templates/zshrc.zsh-template b/templates/zshrc.zsh-template
+index b2cad20..d7cfc3a 100644
+--- a/templates/zshrc.zsh-template
++++ b/templates/zshrc.zsh-template
+@@ -1,5 +1,18 @@
++# Path to your my-shell configuration.
++export MYSHELL="${MYSHELL:-${HOME}/.my-shell}"
++
++# Try to find a valid My Shell folder
++if [ ! -d "${MYSHELL}" ] ; then
++	i="${PWD}/.my-shell"
++	[ -d "${i}" ] && MYSHELL="${i}"
++fi
++if [ ! -d "${MYSHELL}" ] ; then
++	i="$(git rev-parse --show-toplevel 2>/dev/null)"
++	[ -d "${i}" ] && MYSHELL="${i}"
++fi
++
+ # Path to your oh-my-zsh configuration.
+-ZSH=$HOME/.oh-my-zsh
++ZSH=$MYSHELL/zsh/oh-my-zsh
+ 
+ # Set name of the theme to load.
+ # Look in ~/.oh-my-zsh/themes/
