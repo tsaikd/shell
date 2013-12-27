@@ -390,6 +390,12 @@ else
 		complete -F _virsh -o default vm
 	fi
 
+	if [ "$(type -p docker)" ] ; then
+		alias dkcls="docker ps -a"
+		alias dkcrma='docker rm $(docker ps -a -q)'
+		alias dkils="docker images -a -tree"
+	fi
+
 	i="/root/script/config/general.sh"
 	[ -w "${i}" ] && alias viconf="vi \"${i}\""
 	if [ "$(type -p ccache)" ] ; then
