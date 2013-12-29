@@ -26,8 +26,8 @@ function compare_config() {
 			if [ "${autobackup}" ] ; then
 				local backup_file="${path_tar}_$(date +%s)"
 				printf '\033[0;32m%s %s %s\033[0m\n' "${path_tar}" 'exists, backup to' "${backup_file}"
-				mv "${path_tar}" "${backup_file}"
-				cp -a "${path_src}" "${path_tar}"
+				mv "${path_tar}" "${backup_file}" || exit $?
+				cp -a "${path_src}" "${path_tar}" || exit $?
 			else
 				printf '\033[0;33m%s %s\033[0m\n' "${path_tar}" 'exists, difference:'
 				echo "${diff_file}"
@@ -35,7 +35,7 @@ function compare_config() {
 			fi
 		fi
 	else
-		cp -a "${path_src}" "${path_tar}"
+		cp -a "${path_src}" "${path_tar}" || exit $?
 	fi
 }
 
