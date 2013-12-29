@@ -391,8 +391,17 @@ else
 	fi
 
 	if [ "$(type -p docker)" ] ; then
+		function dkcrm() {
+			if [ $# -eq 0 ] ; then
+				local list="$(docker ps -a | grep Exit | awk '{print $1}')"
+				if [ "${list}" ] ; then
+					docker rm ${list}
+				fi
+			else
+				docker rm $@
+			fi
+		}
 		alias dkcls="docker ps -a"
-		alias dkcrma='docker rm $(docker ps -a -q)'
 		alias dkils="docker images -a -tree"
 	fi
 
