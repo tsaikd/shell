@@ -402,7 +402,7 @@ else
 			fi
 		}
 		alias dkcls="docker ps -a"
-		alias dkils="docker images -a -tree"
+		alias dkils="docker images -a -tree | less"
 	fi
 
 	i="/root/script/config/general.sh"
