@@ -39,7 +39,7 @@ function compare_config() {
 	fi
 }
 
-opt="$(getopt -o h -- "$@")" || usage "Parse options failed"
+opt="$(getopt h $*)" || usage "Parse options failed"
 
 eval set -- "${opt}"
 while true ; do
