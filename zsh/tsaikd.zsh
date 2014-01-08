@@ -1,8 +1,8 @@
 #!/bin/zsh
 
 lsopt="-F"
-if [[ "$(uname)" == "FreeBSD" ]] ; then
-	lsopt="${lsopt} -G"
+if [[ "$(uname)" == "FreeBSD" ]] || [[ "$(uname)" == "Darwin" ]] ; then
+	lsopt="${lsopt} -GF"
 	alias df='df -T -h'
 else
 	lshelp="$(ls --help)"
