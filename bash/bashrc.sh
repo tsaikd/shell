@@ -129,13 +129,22 @@ fi
 	{ screen -x `whoami` || screen -S `whoami` ; } && clear
 }
 
-[ "$(type -p wget)" ] && function myip () {
+[ "$(type -p wget)" ] && function myip() {
 	wget -qO /dev/stdout "http://www.whatismyip.com.tw" | perl -ane 's/h2[^0-9]+([0-9.]+)/print $1/e'
 	echo
 }
 
-[ "$(type -p wget)" ] && [ "$(type -p tar)" ] && function kd_get_bash () {
-	wget --no-cache 'http://www.tsaikd.org/git/?p=bash.git;a=snapshot;h=refs/heads/master;sf=tbz2' -O - | tar xjf -
+# proxy config
+function proxyoff() {
+	unset HTTP_PROXY
+	unset http_proxy
+	unset HTTPS_PROXY
+	unset https_proxy
+	unset FTP_PROXY
+	unset ftp_proxy
+	unset RSYNC_PROXY
+	unset rsync_proxy
+	echo "Proxy environment variable removed."
 }
 
 lsopt="-F"
