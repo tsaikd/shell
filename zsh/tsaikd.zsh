@@ -34,3 +34,7 @@ else
 	[ "$(id -u)" -ne 0 ] && [ -n "$(type -p last)" ] && last -5
 fi
 
+# archlinux
+[ -f "/usr/share/doc/pkgfile/command-not-found.zsh" ] && \
+	source "/usr/share/doc/pkgfile/command-not-found.zsh"
+

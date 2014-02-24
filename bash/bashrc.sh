@@ -257,6 +257,10 @@ if [ "$(type -p emerge)" ] ; then
 	fi
 fi
 
+# archlinux
+[ -f "/usr/share/doc/pkgfile/command-not-found.bash" ] && \
+	source "/usr/share/doc/pkgfile/command-not-found.bash"
+
 if [ "$(id -u)" -ne 0 ] ; then
 	[ "$(type -p reboot)" ] && \
 		alias reboot='exec sudo reboot'
