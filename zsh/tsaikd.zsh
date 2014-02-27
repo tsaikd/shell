@@ -23,6 +23,11 @@ unset lshelp lsopt
 
 alias ssu='sudo su -c "bash --rcfile \"${HOME}/.bashrc\""'
 
+if hash ssh 2>/dev/null ; then
+	alias ssh='ssh -oStrictHostKeyChecking=no'
+	alias ssht='ssh tsaikd@home.tsaikd.org'
+fi
+
 if hash vim 2>/dev/null ; then
 	export EDITOR="${EDITOR:-vim}"
 fi
