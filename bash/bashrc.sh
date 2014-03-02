@@ -414,6 +414,13 @@ else
 				docker rm $@
 			fi
 		}
+		function dkcre() {
+			local i
+			for i in $(docker ps -q) ; do
+				printf "Restarting "
+				docker restart -t 1 "${i}"
+			done
+		}
 		alias dkcls="docker ps -a"
 		alias dkils="docker images -a -tree | less"
 	fi
