@@ -18,6 +18,7 @@
 	llog = log --graph --decorate --all
 	po = push origin
 	pom = push origin master:refs/heads/master
+	pomg = push origin master:refs/heads/master master:gh-pages --tags
 	reba = rebase --abort
 	rebc = rebase --continue
 	sm = submodule
