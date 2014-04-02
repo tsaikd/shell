@@ -20,7 +20,7 @@ fi
 
 # load custom script before login
 if [ -d "${MYSHELL}/custom/bash/login-before" ] ; then
-	for i in $(find "${MYSHELL}/custom/bash/login-before" -type f -iname *.sh) ; do
+	for i in $(find "${MYSHELL}/custom/bash/login-before" -type f -iname \*.sh) ; do
 		source "${i}"
 	done
 fi
@@ -29,7 +29,7 @@ source "${MYSHELL}/bash/bashrc.sh"
 
 # load custom script post login
 if [ -d "${MYSHELL}/custom/bash/login-post" ] ; then
-	for i in $(find "${MYSHELL}/custom/bash/login-post" -type f -iname *.sh) ; do
+	for i in $(find "${MYSHELL}/custom/bash/login-post" -type f -iname \*.sh) ; do
 		source "${i}"
 	done
 fi
