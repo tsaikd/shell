@@ -182,7 +182,7 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 [ "$(type -p readlink)" ] && \
 	alias cd.='cd "$(readlink -f .)"'
 [ "$(type -p sudo)" ] && \
-	alias ssu='sudo su -c "bash --rcfile \"${HOME}/.bashrc\""'
+	alias ssu='sudo -H bash --rcfile "${HOME}/.bashrc"'
 [ "$(type -p vim)" ] && \
 	alias vi='vim'
 [ "$(type -p perl)" ] && \
