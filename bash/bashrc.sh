@@ -217,7 +217,7 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 	alias host='links -lookup'
 if [ "$(type -p ssh)" ] ; then
 	alias ssh='ssh -oStrictHostKeyChecking=no'
-	alias ssht='ssh tsaikd@home.tsaikd.org'
+	alias ssht='ssh tsaikd@ssh.tsaikd.org'
 fi
 
 i="/var/log/messages"
