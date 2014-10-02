@@ -8,7 +8,8 @@
 	co = checkout
 	cotm = checkout -b master -t origin/master
 	com = checkout origin/master
-	di = diff
+	di = diff -b -w
+	diw = diff -b -w --color-words
 	fe = fetch --all
 	sa = stash
 	st = status
