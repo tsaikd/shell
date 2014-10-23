@@ -124,10 +124,17 @@ fi
 
 [ "$(type -p setterm)" ] && TERM=linux setterm -regtabs 4
 
-[ "$(type -p screen)" ] && [ "${TERM}" != "screen" ] && function sr() {
-	screen -wipe
-	{ screen -x `whoami` || screen -S `whoami` ; } && clear
-}
+if [ "$(type -p tmux)" ] ; then
+	function sr() {
+		tmux attach || tmux
+		clear
+	}
+elif [ "$(type -p screen)" ] ; then
+	function sr() {
+		screen -wipe
+		{ screen -x `whoami` || screen -S `whoami` ; } && clear
+	}
+fi
 
 [ "$(type -p wget)" ] && function myip() {
 	wget -qO /dev/stdout "http://www.whatismyip.com.tw" | perl -ane 's/h2[^0-9]+([0-9.]+)/print $1/e'
