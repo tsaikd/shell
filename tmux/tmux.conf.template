@@ -1,12 +1,18 @@
 
+# tmux config
+setw -g automatic-rename
+set-window-option -g xterm-keys on
+set-option -g default-terminal "xterm-256color"
+set-option -g history-limit 15000
+#setw -g mode-mouse on
+
 # status bar
 set -g status-bg blue
 set -g status-fg white
 set-window-option -g window-status-current-bg red
 set-window-option -g window-status-current-attr bright
 set -g status-left "#[fg=white,bright] #H#[default]"
-set -g status-right "#[fg=green,bright](#(cat /proc/loadavg | cut -d \" \" -f 1,2,3))#[default] #[fg=yellow,bright]%m/%d %H:%M#[default]"
-setw -g automatic-rename
+set -g status-right "#[fg=green,bright](#(top -bn1 | sed -n '1,5{/Cpu/p}' | grep -o '[[:digit:].]* *id' | awk '{print 100-$1}')% #(free | awk '/^Mem:/{a=$2 ; getline ; print int\\(100*$3/a + 0.5\\)}')%)#[default] #[fg=yellow,bright]%m/%d %H:%M#[default]"
 
 # Set the prefix to ^A.
 unbind C-b
@@ -39,13 +45,19 @@ unbind ^A
 bind ^A last-window
 
 # windows Left Right
-unbind C-Left
+#set -g terminal-overrides "xterm*:kLFT5=\eOD:kRIT5=\eOC:kUP5=\eOA:kDN5=\eOB:smkx@:rmkx@:colors=256"
+#set -g terminal-overrides 'xterm*:smcup@:rmcup@'
+unbind -n C-Left
 bind -n C-Left previous-window
-unbind C-Right
+unbind -n C-Right
 bind -n C-Right next-window
-unbind C-S-Left
+unbind -n M-PageUp
+bind -n M-PageUp previous-window
+unbind -n M-PageDown
+bind -n M-PageDown next-window
+unbind -n C-S-Left
 bind -n C-S-Left swap-window -t -1
-unbind C-S-Right
+unbind -n C-S-Right
 bind -n C-S-Right swap-window -t +1
 
 # kill K k 
@@ -85,3 +97,4 @@ bind ^w choose-window
 # easily toggle synchronization (mnemonic: e is for echo)
 bind e setw synchronize-panes on
 bind E setw synchronize-panes off
+
