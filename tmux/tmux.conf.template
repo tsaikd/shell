@@ -43,6 +43,10 @@ unbind C-Left
 bind -n C-Left previous-window
 unbind C-Right
 bind -n C-Right next-window
+unbind C-S-Left
+bind -n C-S-Left swap-window -t -1
+unbind C-S-Right
+bind -n C-S-Right swap-window -t +1
 
 # kill K k 
 unbind K
