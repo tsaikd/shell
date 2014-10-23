@@ -92,6 +92,7 @@ esac
 compare_config "screen/screenrc.template" "${HOME}/.screenrc" true
 compare_config "vim/vimrc.template" "${HOME}/.vimrc" true
 compare_config "top/toprc.template" "${HOME}/.toprc" true
+compare_config "tmux/tmux.conf.template" "${HOME}/.tmux.conf" true
 compare_config "git/gitconfig.template" "${HOME}/.gitconfig"
 
 popd &>/dev/null

@@ -1,0 +1,83 @@
+
+# status bar
+set -g status-bg blue
+set -g status-fg white
+set-window-option -g window-status-current-bg red
+set-window-option -g window-status-current-attr bright
+set -g status-left "#[fg=white,bright] #H#[default]"
+set -g status-right "#[fg=green,bright](#(cat /proc/loadavg | cut -d \" \" -f 1,2,3))#[default] #[fg=yellow,bright]%m/%d %H:%M#[default]"
+setw -g automatic-rename
+
+# Set the prefix to ^A.
+unbind C-b
+set -g prefix ^A
+bind a send-prefix
+
+# Bind appropriate commands similar to screen.
+# lockscreen ^X x 
+unbind ^X
+bind ^X lock-server
+unbind x
+bind x lock-server
+
+# screen ^C c 
+unbind ^C
+bind ^C new-window
+unbind c
+bind c new-window
+
+# detach ^D d
+unbind ^D
+bind ^D detach
+
+# title A
+unbind A
+bind A command-prompt "rename-window %%"
+
+# other ^A
+unbind ^A
+bind ^A last-window
+
+# windows Left Right
+unbind C-Left
+bind -n C-Left previous-window
+unbind C-Right
+bind -n C-Right next-window
+
+# kill K k 
+unbind K
+bind K confirm-before "kill-window"
+unbind k
+bind k confirm-before "kill-window"
+
+# redisplay ^L l 
+unbind ^L
+bind ^L refresh-client
+unbind l
+bind l refresh-client
+
+# split -v |
+unbind h
+bind h split-window -h
+unbind v
+bind v split-window -v
+
+# pane
+bind -r < resize-pane -L 1
+bind -r > resize-pane -R 1
+bind -r - resize-pane -D 1
+bind -r + resize-pane -U 1
+
+# :kB: focus up
+unbind Tab
+bind Tab select-pane -t:.+
+unbind BTab
+bind BTab select-pane -t:.-
+
+# ^w windowlist -b
+unbind ^w
+bind ^w choose-window
+
+# easily toggle synchronization (mnemonic: e is for echo)
+bind e setw synchronize-panes on
+bind E setw synchronize-panes off
