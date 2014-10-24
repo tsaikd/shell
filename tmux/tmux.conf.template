@@ -59,6 +59,10 @@ unbind -n C-S-Left
 bind -n C-S-Left swap-window -t -1
 unbind -n C-S-Right
 bind -n C-S-Right swap-window -t +1
+unbind PageUp
+bind -r PageUp swap-window -t -1
+unbind PageDown
+bind -r PageDown swap-window -t +1
 
 # kill K k 
 unbind K
