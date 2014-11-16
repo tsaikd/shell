@@ -1,5 +1,5 @@
 diff --git a/templates/zshrc.zsh-template b/templates/zshrc.zsh-template
-index b2cad20..d7cfc3a 100644
+index a12eca2..9222b13 100644
 --- a/templates/zshrc.zsh-template
 +++ b/templates/zshrc.zsh-template
 @@ -1,5 +1,18 @@
@@ -16,9 +16,9 @@ index b2cad20..d7cfc3a 100644
 +	[ -d "${i}" ] && MYSHELL="${i}"
 +fi
 +
- # Path to your oh-my-zsh configuration.
--ZSH=$HOME/.oh-my-zsh
-+ZSH=$MYSHELL/zsh/oh-my-zsh
+ # Path to your oh-my-zsh installation.
+-export ZSH=$HOME/.oh-my-zsh
++export ZSH=$MYSHELL/zsh/oh-my-zsh
  
  # Set name of the theme to load.
  # Look in ~/.oh-my-zsh/themes/
