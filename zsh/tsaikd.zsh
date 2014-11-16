@@ -3,7 +3,7 @@
 lsopt="-F"
 if [[ "$(uname)" == "FreeBSD" ]] || [[ "$(uname)" == "Darwin" ]] ; then
 	lsopt="${lsopt} -GF"
-	alias df='df -T -h'
+	alias df='df -h'
 else
 	lshelp="$(ls --help)"
 	lsopt="${lsopt} --color=auto"
