@@ -271,11 +271,12 @@ fi
 
 if [ "$(type -p docker)" ] ; then
 	_docker_run='docker run -it'
-	_docker_chuser='-u $UID -e "HOME=$HOME" -v "$HOME:$HOME" -v "/etc/passwd:/etc/passwd:ro" -v "/etc/group:/etc/group:ro" -v "/etc/sudoers.d:/etc/sudoers.d:ro"'
+	_docker_chuser='-u $UID -e "HOME=$HOME" -v "$HOME:$HOME" -v "/etc/passwd:/etc/passwd:ro" -v "/etc/shadow:/etc/shadow:ro" -v "/etc/group:/etc/group:ro" -v "/etc/sudoers.d:/etc/sudoers.d:ro"'
 	_docker_mntpwd='-v "$PWD:$PWD" -w "$PWD"'
 	alias docker="sudo docker"
 	alias dkils="docker images -a -tree | less"
 	alias dkt="${_docker_run} --rm ${_docker_chuser} ${_docker_mntpwd}"
+	alias dkpt="${_docker_run} --privileged --rm ${_docker_chuser} ${_docker_mntpwd}"
 	unset _docker_run _docker_chuser _docker_mntpwd
 	function dkcrm() {
 		if [ $# -eq 0 ] ; then
