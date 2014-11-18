@@ -136,9 +136,10 @@ elif [ "$(type -p screen)" ] ; then
 	}
 fi
 
-[ "$(type -p wget)" ] && function myip() {
-	wget -qO /dev/stdout "http://www.whatismyip.com.tw" | perl -ane 's/h2[^0-9]+([0-9.]+)/print $1/e'
-	echo
+function myip() {
+	dig +short myip.opendns.com @resolver1.opendns.com || \
+		wget -qO /dev/stdout "http://icanhazip.com" || \
+		curl -s "http://icanhazip.com"
 }
 
 # proxy config
