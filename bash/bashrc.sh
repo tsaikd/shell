@@ -269,6 +269,46 @@ fi
 [ -f "/usr/share/doc/pkgfile/command-not-found.bash" ] && \
 	source "/usr/share/doc/pkgfile/command-not-found.bash"
 
+if [ "$(type -p docker)" ] ; then
+	_docker_run='docker run -it'
+	_docker_chuser='-u $UID -e "HOME=$HOME" -v "$HOME:$HOME" -v "/etc/passwd:/etc/passwd:ro" -v "/etc/group:/etc/group:ro" -v "/etc/sudoers.d:/etc/sudoers.d:ro"'
+	_docker_mntpwd='-v "$PWD:$PWD" -w "$PWD"'
+	alias docker="sudo docker"
+	alias dkils="docker images -a -tree | less"
+	alias dkt="${_docker_run} --rm ${_docker_chuser} ${_docker_mntpwd}"
+	unset _docker_run _docker_chuser _docker_mntpwd
+	function dkcrm() {
+		if [ $# -eq 0 ] ; then
+			local list="$(docker ps -a | grep Exit | awk '{print $1}')"
+			if [ "${list}" ] ; then
+				docker rm ${list}
+			fi
+		else
+			docker rm $@
+		fi
+	}
+	function dkcre() {
+		local i
+		for i in $(docker ps -q) ; do
+			printf "Restarting "
+			docker restart -t 1 "${i}"
+		done
+	}
+	function dksh() {
+		sudo docker exec -it "$@" bash -l
+	}
+fi
+
+if [ "$(type -p fig)" ] ; then
+	alias fig="sudo fig"
+	alias figup="fig up -d"
+	function figre() {
+		sudo fig kill "$@" && \
+		sudo fig rm --force "$@" && \
+		sudo fig up -d "$@"
+	}
+fi
+
 if [ "$(id -u)" -ne 0 ] ; then
 	[ "$(type -p reboot)" ] && \
 		alias reboot='exec sudo reboot'
@@ -409,28 +449,6 @@ else
 		}
 		complete -F _virsh -o default virsh
 		complete -F _virsh -o default vm
-	fi
-
-	if [ "$(type -p docker)" ] ; then
-		function dkcrm() {
-			if [ $# -eq 0 ] ; then
-				local list="$(docker ps -a | grep Exit | awk '{print $1}')"
-				if [ "${list}" ] ; then
-					docker rm ${list}
-				fi
-			else
-				docker rm $@
-			fi
-		}
-		function dkcre() {
-			local i
-			for i in $(docker ps -q) ; do
-				printf "Restarting "
-				docker restart -t 1 "${i}"
-			done
-		}
-		alias dkcls="docker ps -a"
-		alias dkils="docker images -a -tree | less"
 	fi
 
 	i="/root/script/config/general.sh"
