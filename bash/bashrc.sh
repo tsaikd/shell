@@ -125,10 +125,12 @@ fi
 [ "$(type -p setterm)" ] && TERM=linux setterm -regtabs 4
 
 if [ "$(type -p tmux)" ] ; then
-	function sr() {
-		tmux attach || tmux
-		clear
-	}
+	if [ -z "${TMUX}" ] ; then
+		function sr() {
+			tmux attach || tmux
+			clear
+		}
+	fi
 elif [ "$(type -p screen)" ] ; then
 	function sr() {
 		screen -wipe
@@ -213,10 +215,6 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 	alias top='htop'
 [ "$(type -p mkisofs)" ] && \
 	alias mkisofs='mkisofs -l -r -J'
-[ "$(type -p irssi)" ] && [ "$TERM" == "screen" ] && \
-	alias irssi='screen -t IRC 10 irssi'
-[ "$(type -p cscope)" ] && \
-	alias csc='cscope -bR'
 [ "$(type -p gitk)" ] && \
 	alias gitk='gitk --all --date-order &'
 [ "$(type -p mc)" ] && [ "$TERM" == "screen" ] && \
@@ -477,6 +475,8 @@ fi
 unset i
 
 [ -r "${HOME}/.bashrc.local" ] && source "${HOME}/.bashrc.local"
+
+# auto attach existed session
 [ "${TERM}" == "xterm" ] && [ "$(id -u)" -ne 0 ] && [ "$(type -t sr)" ] && sr
 
 fi # [ "${PS1}" ]
