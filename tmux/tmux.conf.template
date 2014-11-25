@@ -12,7 +12,7 @@ set -g status-fg white
 set-window-option -g window-status-current-bg red
 set-window-option -g window-status-current-attr bright
 set -g status-left "#[fg=white,bright] #H#[default]"
-set -g status-right "#[fg=green,bright](#(top -bn1 | sed -n '1,5{/Cpu/p}' | grep -o '[[:digit:].]* *id' | awk '{print 100-$1}')% #(free | awk '/^Mem:/{a=$2 ; getline ; print int\\(100*$3/a + 0.5\\)}')%)#[default] #[fg=yellow,bright]%m/%d %H:%M#[default]"
+set -g status-right "#[fg=green,bright](#(top -bn1 | sed -n '1,5{/Cpu/{s/%/ /g;p}}' | grep -o '[[:digit:].]* *id' | sed 's/%/ /' | awk '{print 100-$1}')% #(free | awk '/^Mem:/{a=$2 ; getline ; print int\\(100*$3/a + 0.5\\)}')%)#[default] #[fg=yellow,bright]%m/%d %H:%M#[default]"
 
 # Set the prefix to ^A.
 unbind C-b
