@@ -477,7 +477,7 @@ unset i
 [ -r "${HOME}/.bashrc.local" ] && source "${HOME}/.bashrc.local"
 
 # auto attach existed session
-[ "${TERM}" == "xterm" ] && [ "$(id -u)" -ne 0 ] && [ "$(type -t sr)" ] && sr
+[ "${TERM}" == "xterm" ] && [ "$(id -u)" -ne 0 ] && [ "$(type -t sr)" ] && sr || true
 
 fi # [ "${PS1}" ]
 
