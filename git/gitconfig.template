@@ -3,8 +3,8 @@
 	email = UNKNOWN@example.com
 [alias]
 	br = branch
-	ci = commit
-	cia = commit --amend
+	ci = commit -s
+	cia = commit -s --amend
 	co = checkout
 	cotm = checkout -b master -t origin/master
 	com = checkout origin/master
