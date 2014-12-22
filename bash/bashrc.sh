@@ -204,7 +204,8 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 [ "$(type -p sdiff)" ] && \
 	alias sdiff='sdiff -s -w 80'
 [ "$(type -p rsync)" ] && [ "$(type -p ssh)" ] && \
-	alias rscp='rsync -aP -e "ssh -oCiphers=arcfour -oStrictHostKeyChecking=no"'
+	alias rscp='rsync -aP -e "ssh -oCiphers=arcfour -oStrictHostKeyChecking=no"' && \
+	alias rsmv='rscp --remove-source-files'
 [ "$(type -p telnet)" ] && \
 	alias telnet='telnet -8'
 [ "$(type -p fuser)" ] && \
