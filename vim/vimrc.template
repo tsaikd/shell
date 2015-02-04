@@ -20,6 +20,9 @@ set fileencoding=utf-8
 set fileencodings=utf-8,big5,gbk,euc-jp,euc-kr,utf-bom,iso8859-1
 set termencoding=utf-8
 
+" 使用 sudo 儲存檔案
+command W w !sudo tee % >/dev/null
+
 " 切換視窗 ( or C-w C-w )
 map <F9> :wincmd p<CR>
 " 重新調整縮排
