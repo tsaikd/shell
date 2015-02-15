@@ -19,6 +19,7 @@
 	llog = log --graph --decorate --all
 	mg = merge --no-edit
 	po = push origin
+	pog = push origin gh-pages:gh-pages
 	pom = push origin master:refs/heads/master
 	pomg = push origin master:refs/heads/master master:gh-pages --tags
 	reba = rebase --abort
