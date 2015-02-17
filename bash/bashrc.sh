@@ -277,6 +277,7 @@ if [ "$(type -p docker)" ] ; then
 	alias dkt="${_docker_run} --rm ${_docker_chuser} ${_docker_mntpwd}"
 	alias dkpt="${_docker_run} --privileged --rm ${_docker_chuser} ${_docker_mntpwd}"
 	alias dklog="docker logs -f"
+	alias dkre="docker restart -t 0"
 	unset _docker_run _docker_chuser _docker_mntpwd
 	function dkcrm() {
 		if [ $# -eq 0 ] ; then
