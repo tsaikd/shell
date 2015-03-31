@@ -21,20 +21,64 @@ alias lla='l -la'
 alias lsd='l -d */'
 unset lshelp lsopt
 
-alias ssu='sudo su -c "bash --rcfile \"${HOME}/.bashrc\""'
+alias ssu='sudo -H bash --rcfile "${HOME}/.bashrc"'
 
-if hash ssh 2>/dev/null ; then
+if (( $+commands[ssh] )) ; then
 	alias ssh='ssh -oStrictHostKeyChecking=no'
 	alias ssht='ssh tsaikd@home.tsaikd.org'
 fi
 
-if hash vim 2>/dev/null ; then
+if (( $+commands[vim] )) ; then
 	export EDITOR="${EDITOR:-vim}"
 fi
 
-if [ "$(type -p screen)" ] && [[ "${TERM}" == "xterm" ]] ; then
-	screen -wipe
-	{ screen -x `whoami` || screen -S `whoami` ; } && clear
+if (( $+commands[docker] )) ; then
+	alias docker="sudo docker"
+	alias dklog="docker logs -f"
+	alias dkre="docker restart -t 0"
+	function dkt() {
+		local run="run -it --rm"
+		local mntpwd="-v '$PWD:$PWD' -w '$PWD'"
+		if (($#)) ; then
+			eval docker ${run} ${mntpwd} "$@"
+		else
+			eval docker ${run} ${mntpwd} ubuntu:14.04
+		fi
+	}
+	function dku() {
+		local chuser="-u $UID -e 'HOME=$HOME' -v '$HOME:$HOME' -v '/etc/passwd:/etc/passwd:ro' -v '/etc/shadow:/etc/shadow:ro' -v '/etc/group:/etc/group:ro' -v '/etc/sudoers.d:/etc/sudoers.d:ro'"
+		if (($#)) ; then
+			eval dkt ${chuser} "$@"
+		else
+			eval dkt ${chuser} ubuntu:14.04
+		fi
+	}
+	function dksh() {
+		eval docker exec -it "$@" bash -l
+	}
+fi
+
+if (( $+commands[fig] )) ; then
+	alias fig='sudo fig'
+	alias figup="fig up -d"
+	function figre() {
+		eval fig kill "$@" && \
+		eval fig rm --force "$@" && \
+		eval fig up -d "$@"
+	}
+fi
+
+if [[ "${TERM}" == "xterm" ]] ; then
+	if (( $+commands[tmux] )) ; then
+		if [[ -z "${TMUX}" ]] ; then
+			tmux attach || tmux
+		fi
+	elif (( $+commands[screen] )) ; then
+		screen -wipe
+		screen -x "$(whoami)" || screen -S "$(whoami)"
+	else
+		[ "$(id -u)" -ne 0 ] && [ -n "$(type -p last)" ] && last -5
+	fi
 else
 	[ "$(id -u)" -ne 0 ] && [ -n "$(type -p last)" ] && last -5
 fi

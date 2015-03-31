@@ -80,8 +80,8 @@ zsh)
 	patch -p2 < zshrc.patch >/dev/null
 	compare_config "zshrc.zsh-template" "${HOME}/.zshrc" true
 	rm -f "zshrc.zsh-template"
-	cp -af "robbyrussell.zsh-theme" "oh-my-zsh/custom/"
-	cp -af "tsaikd.zsh" "oh-my-zsh/custom/"
+	ln -sf "${PWD}/robbyrussell.zsh-theme" "oh-my-zsh/custom/"
+	ln -sf "${PWD}/tsaikd.zsh" "oh-my-zsh/custom/"
 	popd &>/dev/null
 	;;
 *)
