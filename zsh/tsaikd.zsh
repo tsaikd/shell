@@ -36,6 +36,7 @@ if (( $+commands[docker] )) ; then
 	alias docker="sudo docker"
 	alias dklog="docker logs -f"
 	alias dkre="docker restart -t 0"
+	alias dkcrm='docker rm -v $(docker ps -qf "status=exited")'
 	function dkt() {
 		local run="run -it --rm"
 		local mntpwd="-v '$PWD:$PWD' -w '$PWD'"

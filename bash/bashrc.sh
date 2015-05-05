@@ -278,17 +278,8 @@ if [ "$(type -p docker)" ] ; then
 	alias dkpt="${_docker_run} --privileged --rm ${_docker_chuser} ${_docker_mntpwd}"
 	alias dklog="docker logs -f"
 	alias dkre="docker restart -t 0"
+	alias dkcrm='docker rm -v $(docker ps -qf "status=exited")'
 	unset _docker_run _docker_chuser _docker_mntpwd
-	function dkcrm() {
-		if [ $# -eq 0 ] ; then
-			local list="$(docker ps -a | grep Exit | awk '{print $1}')"
-			if [ "${list}" ] ; then
-				docker rm ${list}
-			fi
-		else
-			docker rm $@
-		fi
-	}
 	function dkcre() {
 		local i
 		for i in $(docker ps -q) ; do
