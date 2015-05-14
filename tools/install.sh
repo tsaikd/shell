@@ -39,14 +39,9 @@ function compare_config() {
 	fi
 }
 
-opt="$(getopt h $*)" || usage "Parse options failed"
-
-eval set -- "${opt}"
-while true ; do
-	case "${1}" in
-	-h) usage ; shift ;;
-	--) shift ; break ;;
-	*) echo "Internal error!" ; exit 1 ;;
+while getopts "h" opt; do
+	case "${opt}" in
+	h) usage ;;
 	esac
 done
 
