@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+export HISTSIZE=1000000
+
 lsopt="-F"
 if [[ "$(uname)" == "FreeBSD" ]] || [[ "$(uname)" == "Darwin" ]] ; then
 	lsopt="${lsopt} -GF"
