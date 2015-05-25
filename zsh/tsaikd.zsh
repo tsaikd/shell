@@ -90,3 +90,12 @@ fi
 [ -f "/usr/share/doc/pkgfile/command-not-found.zsh" ] && \
 	source "/usr/share/doc/pkgfile/command-not-found.zsh"
 
+# load custom script post login
+if [ -d "${MYSHELL}/custom/zsh/login-post" ] ; then
+	for i in $(find "${MYSHELL}/custom/zsh/login-post" -iname \*.zsh) ; do
+		source "${i}"
+	done
+fi
+
+unset i
+
