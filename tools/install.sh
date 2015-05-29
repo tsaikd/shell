@@ -48,11 +48,15 @@ done
 action="${1}"
 
 if [ -z "${action}" ] ; then
-	case "${SHELL}" in
-	/bin/bash) action="bash" ;;
-	/bin/zsh) action="zsh" ;;
-	*) usage "Unknown SHELL: '${SHELL}'" ;;
-	esac
+	if [ "${MSYSTEM}" == "MINGW32" ] && [ "${SHELL}" == "/bin/sh" ] ; then
+		action="bash"
+	else
+		case "${SHELL}" in
+		/bin/bash) action="bash" ;;
+		/bin/zsh) action="zsh" ;;
+		*) usage "Unknown SHELL: '${SHELL}'" ;;
+		esac
+	fi
 fi
 
 pushd "${PD}" &>/dev/null
