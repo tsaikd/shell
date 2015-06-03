@@ -71,6 +71,11 @@ if (( $+commands[fig] )) ; then
 	}
 fi
 
+if (( $+commands[git] )) && (( $+commands[gitk] )) ; then
+	alias gitk='gitk --all &'
+	alias gitkui='gitk --all & ; git gui &'
+fi
+
 if [[ "${TERM}" == "xterm" ]] ; then
 	if (( $+commands[tmux] )) ; then
 		if [[ -z "${TMUX}" ]] ; then
