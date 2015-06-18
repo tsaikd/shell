@@ -138,12 +138,6 @@ elif [ "$(type -p screen)" ] ; then
 	}
 fi
 
-function myip() {
-	dig +short myip.opendns.com @resolver1.opendns.com || \
-		wget -qO /dev/stdout "http://icanhazip.com" || \
-		curl -s "http://icanhazip.com"
-}
-
 # proxy config
 function proxyoff() {
 	unset HTTP_PROXY
@@ -188,6 +182,8 @@ alias rd='rmdir'
 alias rm='rm -i'
 alias tar='nice -n 19 tar'
 alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec clear'
+
+alias myip='dig +short myip.opendns.com @resolver1.opendns.com || wget -qO /dev/stdout "http://icanhazip.com" || curl -s "http://icanhazip.com"'
 
 [ "$(type -p readlink)" ] && \
 	alias cd.='cd "$(readlink -f .)"'

@@ -24,6 +24,7 @@ alias lsd='l -d */'
 unset lshelp lsopt
 
 alias ssu='sudo -H bash --rcfile "${HOME}/.bashrc"'
+alias myip='dig +short myip.opendns.com @resolver1.opendns.com || wget -qO /dev/stdout "http://icanhazip.com" || curl -s "http://icanhazip.com"'
 
 if (( $+commands[ssh] )) ; then
 	alias ssh='ssh -oStrictHostKeyChecking=no'
