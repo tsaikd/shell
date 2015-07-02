@@ -265,26 +265,29 @@ fi
 	source "/usr/share/doc/pkgfile/command-not-found.bash"
 
 if [ "$(type -p docker)" ] ; then
-	_docker_run='docker run -it'
-	_docker_chuser='-u $UID -e "HOME=$HOME" -v "$HOME:$HOME" -v "/etc/passwd:/etc/passwd:ro" -v "/etc/shadow:/etc/shadow:ro" -v "/etc/group:/etc/group:ro" -v "/etc/sudoers.d:/etc/sudoers.d:ro"'
-	_docker_mntpwd='-v "$PWD:$PWD" -w "$PWD"'
 	alias docker="sudo docker"
-	alias dkils="docker images -a -tree | less"
-	alias dkt="${_docker_run} --rm ${_docker_chuser} ${_docker_mntpwd}"
-	alias dkpt="${_docker_run} --privileged --rm ${_docker_chuser} ${_docker_mntpwd}"
 	alias dklog="docker logs -f"
 	alias dkre="docker restart -t 0"
 	alias dkcrm='docker rm -v $(docker ps -qf "status=exited")'
-	unset _docker_run _docker_chuser _docker_mntpwd
-	function dkcre() {
-		local i
-		for i in $(docker ps -q) ; do
-			printf "Restarting "
-			docker restart -t 1 "${i}"
-		done
+	function dkt() {
+		local run="run -it --rm"
+		local mntpwd="-v '$PWD:$PWD' -w '$PWD'"
+		if (($#)) ; then
+			eval docker ${run} ${mntpwd} "$@"
+		else
+			eval docker ${run} ${mntpwd} ubuntu:14.04
+		fi
+	}
+	function dku() {
+		local chuser="-u $UID -e 'HOME=$HOME' -v '$HOME:$HOME' -v '/etc/passwd:/etc/passwd:ro' -v '/etc/shadow:/etc/shadow:ro' -v '/etc/group:/etc/group:ro' -v '/etc/sudoers.d:/etc/sudoers.d:ro'"
+		if (($#)) ; then
+			eval dkt ${chuser} "$@"
+		else
+			eval dkt ${chuser} ubuntu:14.04
+		fi
 	}
 	function dksh() {
-		sudo docker exec -it "$@" bash -l
+		eval docker exec -it "$@" bash -l
 	}
 fi
 
