@@ -85,10 +85,10 @@ if [[ "${TERM}" == "xterm" ]] ; then
 	elif (( $+commands[screen] )) ; then
 		screen -wipe
 		screen -x "$(whoami)" || screen -S "$(whoami)"
-	else
+	elif [ "$(uname -s)" != "Darwin" ] ; then
 		[ "$(id -u)" -ne 0 ] && [ -n "$(type -p last)" ] && last -5
 	fi
-else
+elif [ "$(uname -s)" != "Darwin" ] ; then
 	[ "$(id -u)" -ne 0 ] && [ -n "$(type -p last)" ] && last -5
 fi
 
