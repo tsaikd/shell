@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PN="${BASH_SOURCE[0]##*/}"
-PD="${BASH_SOURCE[0]%/*}"
+PD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 function usage() {
 	cat <<EOF
@@ -95,4 +95,3 @@ compare_config "tmux/tmux.conf.template" "${HOME}/.tmux.conf" true
 compare_config "git/gitconfig.template" "${HOME}/.gitconfig"
 
 popd &>/dev/null
-

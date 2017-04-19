@@ -265,7 +265,6 @@ fi
 	source "/usr/share/doc/pkgfile/command-not-found.bash"
 
 if [ "$(type -p docker)" ] ; then
-	alias docker="sudo docker"
 	alias dklog="docker logs -f"
 	alias dkre="docker restart -t 0"
 	alias dkcrm='docker rm -v $(docker ps -qf "status=exited")'
@@ -291,22 +290,7 @@ if [ "$(type -p docker)" ] ; then
 	}
 fi
 
-if [ "$(type -p fig)" ] ; then
-	alias fig="sudo fig"
-	alias figup="fig up -d"
-	function figre() {
-		sudo fig kill "$@" && \
-		sudo fig rm --force "$@" && \
-		sudo fig up -d "$@"
-	}
-fi
-
-if [ "$(id -u)" -ne 0 ] ; then
-	[ "$(type -p reboot)" ] && \
-		alias reboot='exec sudo reboot'
-	[ "$(type -p poweroff)" ] && \
-		alias halt='exec sudo poweroff'
-else
+if [ "$(id -u)" -eq 0 ] ; then
 	pathadd "${HOME}/script/sbin"
 	[ "$(type -p reboot)" ] && \
 		alias reboot='exec reboot'
@@ -472,4 +456,3 @@ unset i
 [ "${TERM}" == "xterm" ] && [ "$(id -u)" -ne 0 ] && [ "$(type -t sr)" ] && sr || true
 
 fi # [ "${PS1}" ]
-
