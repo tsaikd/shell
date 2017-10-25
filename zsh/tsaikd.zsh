@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+export PATH="${HOME}/bin:${HOME}/script:${PATH}"
 export HISTSIZE=1000000
 
 lsopt="-F"
