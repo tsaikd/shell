@@ -3,6 +3,10 @@
 export PATH="${HOME}/bin:${HOME}/script:${PATH}"
 export HISTSIZE=1000000
 
+if [[ -z "${HOSTNAME}" ]] ; then
+	export HOSTNAME="${HOST:-$(hostname)}"
+fi
+
 lsopt="-F"
 if [[ "$(uname)" == "FreeBSD" ]] || [[ "$(uname)" == "Darwin" ]] ; then
 	lsopt="${lsopt} -GF"
@@ -103,6 +107,10 @@ if [ -d "${MYSHELL}/custom/zsh/login-post" ] ; then
 		source "${i}"
 	done
 fi
+
+# load custom script by host
+[ -f "${HOME}/.zshrc-${HOSTNAME}" ] && \
+	source "${HOME}/.zshrc-${HOSTNAME}"
 
 unset i
 
