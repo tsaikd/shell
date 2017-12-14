@@ -25,7 +25,9 @@ if [ -d "${MYSHELL}/custom/bash/login-before" ] ; then
 	done
 fi
 
-source "${MYSHELL}/bash/bashrc.sh"
+if [ -f "${MYSHELL}/bash/bashrc.sh" ] ; then
+	source "${MYSHELL}/bash/bashrc.sh"
+fi
 
 # load custom script post login
 if [ -d "${MYSHELL}/custom/bash/login-post" ] ; then
