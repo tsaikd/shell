@@ -1,6 +1,6 @@
 *.swp
 /.last-update
-/plugins/kube-ps1.sh
+/plugins/
 /zsh/oh-my-zsh/
 /custom/*
 !/custom/README.md
@@ -10,4 +10,3 @@
 !/custom/bash/login-post/README.md
 !/custom/bash/logout-before/README.md
 !/custom/bash/logout-post/README.md
-

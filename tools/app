@@ -1,0 +1,172 @@
+#!/bin/bash
+
+set -Eu
+
+PN="${BASH_SOURCE[0]##*/}"
+PD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+typebinray="binary"
+typetarball="tarball"
+typeplugin="plugin"
+applist=()
+
+function usage() {
+	cat <<EOF
+Usage: ${PN} [Options] <APPLICAION>
+Options:
+  -h    : show this help message
+
+Application:
+  $(list_application)
+EOF
+	[[ $# -gt 0 ]] && { echo ; echo "$@" ; exit 1 ; } || exit 0
+}
+
+function install_application() {
+	local application="${1//,/}"
+	local appfunc="$(get_application_function "${application}")"
+	local apptype version url tarpath localpath tmpdir
+
+	[[ -z "${appfunc}" ]] && usage "Unknown application: '${application}'"
+
+	read -d "\n" apptype version url tarpath <<< "$(${appfunc})"
+
+	case "${apptype}" in
+	"${typebinray}")
+		[[ -z "${url}" ]] && echo "Empty application url: '${application}'" && exit 1
+		if [[ ! -d "${HOME}/bin" ]]; then
+			mkdir -p "${HOME}/bin"
+		fi
+		localpath="${HOME}/bin/${application}-${version}"
+
+		if [[ -x "${localpath}" ]]; then
+			echo "Installed ${application}-${version}"
+		else
+			echo "Downloading ${application}-${version} ..."
+			curl -L "${url}" -o "${localpath}"
+			chmod +x "${localpath}"
+			pushd "${HOME}/bin" >/dev/null
+			ln -sf "${application}-${version}" "${application}"
+			popd >/dev/null
+		fi
+		;;
+	"${typetarball}")
+		[[ -z "${url}" ]] && echo "Empty application url: '${application}'" && exit 1
+		[[ -z "${tarpath}" ]] && echo "Empty application tarball path: '${application}'" && exit 1
+		if [[ ! -d "${HOME}/bin" ]]; then
+			mkdir -p "${HOME}/bin"
+		fi
+		localpath="${HOME}/bin/${application}-${version}"
+		tmpdir="/tmp/my-shell-tmp-$$"
+
+		if [[ -x "${localpath}" ]]; then
+			echo "Installed ${application}-${version}"
+		else
+			echo "Downloading ${application}-${version} ..."
+			mkdir -p "${tmpdir}"
+			curl -L "${url}" -o "${tmpdir}/download-${application}-${version}"
+			tar xf "${tmpdir}/download-${application}-${version}" -C "${tmpdir}"
+			mv "${tmpdir}/${tarpath}" "${localpath}"
+			rm -rf "${tmpdir}"
+			pushd "${HOME}/bin" >/dev/null
+			ln -sf "${application}-${version}" "${application}"
+			popd >/dev/null
+		fi
+		;;
+	"${typeplugin}")
+		[[ -z "${url}" ]] && echo "Empty application url: '${application}'" && exit 1
+		[[ -z "${MYSHELL}" ]] && echo "Empty MYSHELL environment variable" && exit 1
+		if [[ ! -d "${MYSHELL}/plugins" ]]; then
+			mkdir -p "${MYSHELL}/plugins"
+		fi
+		curl -L "${url}" -o "${MYSHELL}/plugins/${application}"
+		;;
+	*) usage "Unknown application type: '${apptype}'" ;;
+	esac
+}
+
+function list_application() {
+	local list=() app loopname loopfunc
+	for app in "${applist[@]}"; do
+		read loopname loopfunc <<< "${app}" || true
+		list+=(${loopname})
+	done
+	echo "${list[@]}"
+}
+
+function get_application_function() {
+	local name="${1}" app loopname loopfunc
+	for app in "${applist[@]}"; do
+		read loopname loopfunc <<< "${app}" || true
+		if [[ "${name}" == "${loopname}" ]]; then
+			echo "${loopfunc}"
+			return 0
+		fi
+	done
+}
+
+applist+=('direnv direnv_info')
+function direnv_info() {
+	local tag os
+	tag="$(curl https://github.com/direnv/direnv/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="darwin"
+	else
+		os="linux"
+	fi
+	echo "${typebinray}"
+	echo "${tag#v}"
+	echo "https://github.com/direnv/direnv/releases/download/${tag}/direnv.${os}-amd64"
+}
+
+applist+=('kubectl kubectl_info')
+function kubectl_info() {
+	local tag os
+	tag="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="darwin"
+	else
+		os="linux"
+	fi
+	echo "${typebinray}"
+	echo "${tag#v}"
+	echo "https://storage.googleapis.com/kubernetes-release/release/${tag}/bin/${os}/amd64/kubectl"
+}
+
+applist+=('k9s k9s_info')
+function k9s_info() {
+	local tag="0.8.2" os
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="Darwin"
+	else
+		os="Linux"
+	fi
+	echo "${typetarball}"
+	echo "${tag#v}"
+	echo "https://github.com/derailed/k9s/releases/download/${tag}/k9s_${tag}_${os}_x86_64.tar.gz"
+	echo "k9s"
+}
+
+applist+=('kube-ps1 kube_ps1_info')
+function kube_ps1_info() {
+	local tag="master"
+	echo "${typeplugin}"
+	echo "${tag}"
+	echo "https://raw.githubusercontent.com/jonmosco/kube-ps1/${tag}/kube-ps1.sh"
+}
+
+function main() {
+	local application
+	for application in "$@"; do
+		install_application "${application}"
+	done
+}
+
+while getopts "h" opt; do
+	case "${opt}" in
+	h) usage ;;
+	esac
+done
+
+[[ $# -eq 0 ]] && usage
+
+main "$@"
