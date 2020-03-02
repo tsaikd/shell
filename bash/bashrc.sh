@@ -37,42 +37,46 @@ function lbcomp() {
 		done
 	fi
 
-	# app-shells/gentoo-bashcomp feature
-	if [[ -f /etc/profile.d/bash-completion ]] ; then
-		source /etc/profile.d/bash-completion
-		if [ "$(type -p emerge)" ] ; then
-			for i in eei ee eea eef ee1 ; do
-				complete -o filenames -F _emerge "${i}"
-			done
-		fi
-	fi
+	[ -f "/snap/google-cloud-sdk/current/completion.bash.inc" ] && source "/snap/google-cloud-sdk/current/completion.bash.inc"
 
 	# set PS1
 	[ "$(type -t __git_ps1)" ] && PS1_GIT='$(__git_ps1 " \[\e[01;35m\](%s)")'
 	eval PS1="${PS1_EVAL}"
 }
 
+if [ -d "${MYSHELL}/plugins" ]; then
+	for i in "${MYSHELL}/plugins/"* ; do
+		source "${i}"
+	done
+fi
+
 bind '"\x1b\x5b\x41":history-search-backward'
 bind '"\x1b\x5b\x42":history-search-forward'
 
 # setup path info
 pathadd "/sbin" "/usr/sbin" "/usr/local/sbin" \
-	"/bin" "/usr/bin" "/usr/local/bin" \
-	"${HOME}/bin" "${HOME}/script"
+	"/bin" "/usr/bin" "/usr/local/bin"
 [ "$(type -p distcc)" ] && pathins "/usr/lib/distcc/bin"
 if [ "$(type -p ccache)" ] ; then
-	if [ -d "/usr/lib/ccache/bin" ] ; then
+	if [ -d "/usr/lib64/ccache/bin" ] ; then
+		pathins "/usr/lib64/ccache/bin"
+	elif [ -d "/usr/lib/ccache/bin" ] ; then
 		pathins "/usr/lib/ccache/bin"
+	elif [ -x "/usr/lib64/ccache/gcc" ] ; then
+		pathins "/usr/lib64/ccache"
 	elif [ -x "/usr/lib/ccache/gcc" ] ; then
 		pathins "/usr/lib/ccache"
 	else
 		echo "ccache detected, but unknown path!!"
 	fi
 fi
+pathins "${HOME}/bin" "${HOME}/script"
 
+shopt -s checkwinsize
 export LANG="C"
 unset LANGUAGE $(set | grep ^LC_ | cut -f1 -d=)
 export LESSHISTFILE="-"
+export HISTCONTROL=ignoreboth
 export HISTFILESIZE=50000
 export HISTSIZE=10000
 export KD_PUBLIC_PC=1
@@ -104,6 +108,11 @@ PS1_DIR=' \[\e[01;34;40m\]\w\[\e[m\]'
 PS1_TAIL='\[\e[m\] $ '
 PS1_EVAL='${PS1_HOST}${PS1_USER}${PS1_DIR}${PS1_GIT}${PS1_TAIL}'
 eval PS1="${PS1_EVAL}"
+
+if type kube_ps1 &> /dev/null; then
+	KUBE_PS1_SUFFIX=") "
+	PS1='$(kube_ps1)'${PS1}
+fi
 
 # setup default language
 if [ "$(type -p locale)" ] ; then
@@ -152,17 +161,20 @@ function proxyoff() {
 }
 
 lsopt="-F"
+dfopt="-h"
+if [ -x /usr/bin/dircolors ]; then
+	lsopt="${lsopt} --color=auto"
+	alias grep='grep --color=auto'
+fi
 if [ "$(uname)" == "FreeBSD" ] || [ "$(uname)" == "Darwin" ] ; then
 	lsopt="${lsopt} -GF"
-	alias df='df -T -h'
 else
 	lshelp="$(ls --help)"
-	lsopt="${lsopt} --color=auto"
 	[ "$(grep -- "--show-control-chars" <<<"${lshelp}")" ] && \
 		lsopt="${lsopt} --show-control-chars"
 	[ "$(grep -- "--group-directories-first" <<<"${lshelp}")" ] && \
 		lsopt="${lsopt} --group-directories-first"
-	alias df='df -T -h -x supermount'
+	dfopt="${dfopt} -T -x supermount"
 fi
 alias l="ls ${lsopt}"
 alias la='l -a'
@@ -170,7 +182,8 @@ alias l1='l -1'
 alias ll='l -l'
 alias lla='l -la'
 alias lsd='l -d */'
-unset lshelp lsopt
+alias df="df ${dfopt}"
+unset lshelp lsopt dfopt
 
 alias cd..='cd ..'
 alias cp='cp -i'
@@ -185,6 +198,8 @@ alias qq='[ -r "${HOME}/.bash_logout" ] && source "${HOME}/.bash_logout" ; exec 
 
 alias myip='dig +short myip.opendns.com @resolver1.opendns.com || wget -qO /dev/stdout "http://icanhazip.com" || curl -s "http://icanhazip.com"'
 
+[ -x /usr/bin/lesspipe ] && \
+	eval "$(SHELL=/bin/sh lesspipe)"
 [ "$(type -p readlink)" ] && \
 	alias cd.='cd "$(readlink -f .)"'
 [ "$(type -p sudo)" ] && \
@@ -208,90 +223,29 @@ alias myip='dig +short myip.opendns.com @resolver1.opendns.com || wget -qO /dev/
 	alias fuser='fuser -muv'
 [ "$(type -p mail)" ] && \
 	alias mail='mail -u `\whoami`'
-[ "$(type -p htop)" ] && \
-	alias top='htop'
 [ "$(type -p mkisofs)" ] && \
 	alias mkisofs='mkisofs -l -r -J'
 [ "$(type -p gitk)" ] && \
 	alias gitk='gitk --all --date-order &'
-[ "$(type -p mc)" ] && [ "$TERM" == "screen" ] && \
-	alias mc='mc -a'
+[ "$(type -p direnv)" ] && \
+	eval "$(direnv hook bash)"
+if [ "$(type -p kubectl)" ]; then
+	source <(kubectl completion bash)
+	alias k='kubectl'
+	complete -o default -F __start_kubectl k
+fi
+[ "$(type -p helm)" ] && \
+	source <(helm completion bash)
 [ -z "$(type -p host)" ] && [ "$(type -p links)" ] && \
 	alias host='links -lookup'
-if [ "$(type -p ssh)" ] ; then
-	alias ssh='ssh -oStrictHostKeyChecking=no'
-	alias ssht='ssh tsaikd@ssh.tsaikd.org'
-fi
-
-i="/var/log/messages"
-[ -r "${i}" ] && alias cmesg="tail -n 20 \"${i}\""
-i="/var/log/syslog"
-[ -r "${i}" ] && alias csyslog="tail -n 20 \"${i}\""
-
-if [ "$(type -p qemu-img)" ] ; then
-	function _qemu_img() {
-		local cur=${COMP_WORDS[COMP_CWORD]}
-		if [ "${COMP_CWORD}" -eq 1 ] ; then
-			COMPREPLY=( $( compgen -W "create convert info" -- ${cur} ) )
-			return
-		fi
-	}
-	complete -F _qemu_img -o default qemu-img
-fi
-
-# gentoo
-if [ "$(type -p emerge)" ] ; then
-	alias eei='emerge --info'
-	if [ "$(id -u)" -eq 0 ] ; then
-		alias ee='emerge -v'
-		alias eea='ee -a'
-		alias eec='eea -C'
-		alias eeC='eea --depclean'
-		alias eef='eea -fO'
-		alias ee1='eea -1'
-		alias eew='eea -uDN world'
-		alias eewp='eew -p'
-	fi
-
-	if [ "$(id -u)" -eq 0 ] ; then
-		if [ "$(type -p eix)" ] ; then
-			alias eixx='type -p layman >/dev/null && layman -S ; eix-sync -v'
-		fi
-	fi
-fi
-
-# archlinux
-[ -f "/usr/share/doc/pkgfile/command-not-found.bash" ] && \
-	source "/usr/share/doc/pkgfile/command-not-found.bash"
 
 if [ "$(type -p docker)" ] ; then
 	alias dklog="docker logs -f"
 	alias dkre="docker restart -t 0"
-	alias dkcrm='docker rm -v $(docker ps -qf "status=exited")'
-	function dkt() {
-		local run="run -it --rm"
-		local mntpwd="-v '$PWD:$PWD' -w '$PWD'"
-		if (($#)) ; then
-			eval docker ${run} ${mntpwd} "$@"
-		else
-			eval docker ${run} ${mntpwd} ubuntu:14.04
-		fi
-	}
-	function dku() {
-		local chuser="-u $UID -e 'HOME=$HOME' -v '$HOME:$HOME' -v '/etc/passwd:/etc/passwd:ro' -v '/etc/shadow:/etc/shadow:ro' -v '/etc/group:/etc/group:ro' -v '/etc/sudoers.d:/etc/sudoers.d:ro'"
-		if (($#)) ; then
-			eval dkt ${chuser} "$@"
-		else
-			eval dkt ${chuser} ubuntu:14.04
-		fi
-	}
-	function dksh() {
-		eval docker exec -it "$@" bash -l
-	}
 fi
 
 if [ "$(id -u)" -eq 0 ] ; then
-	pathadd "${HOME}/script/sbin"
+	pathadd "${HOME}/sbin" "${HOME}/script/sbin" "${HOME}/bin/sbin"
 	[ "$(type -p reboot)" ] && \
 		alias reboot='exec reboot'
 	[ "$(type -p poweroff)" ] && \
@@ -312,12 +266,6 @@ if [ "$(id -u)" -eq 0 ] ; then
 			fi
 		}
 		complete -F _service -o default service
-	fi
-	if [ "$(type -t btrfs)" ] ; then
-		alias btv='btrfs subvolume'
-		alias btf='btrfs filesystem'
-		alias btd='btrfs device'
-		alias bts='btf show'
 	fi
 	if [ "$(type -p zfs)" ] ; then
 		alias zfl='zfs list -t filesystem'
@@ -453,6 +401,8 @@ unset i
 [ -r "${HOME}/.bashrc.local" ] && source "${HOME}/.bashrc.local"
 
 # auto attach existed session
-[ "${TERM}" == "xterm" ] && [ "$(id -u)" -ne 0 ] && [ "$(type -t sr)" ] && sr || true
+if [ "${DISABLE_AUTO_SESSION}" != "true" ]; then
+	[ "${TERM}" == "xterm" ] && [ "$(id -u)" -ne 0 ] && [ "$(type -t sr)" ] && sr || true
+fi
 
 fi # [ "${PS1}" ]

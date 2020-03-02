@@ -79,7 +79,6 @@ zsh)
 	patch -p2 < zshrc.patch >/dev/null
 	compare_config "zshrc.zsh-template" "${HOME}/.zshrc" true
 	rm -f "zshrc.zsh-template"
-	ln -sf "${PWD}/robbyrussell.zsh-theme" "oh-my-zsh/custom/"
 	ln -sf "${PWD}/tsaikd.zsh" "oh-my-zsh/custom/"
 	popd &>/dev/null
 	;;
@@ -93,5 +92,44 @@ compare_config "vim/vimrc.template" "${HOME}/.vimrc" true
 compare_config "top/toprc.template" "${HOME}/.toprc" true
 compare_config "tmux/tmux.conf.template" "${HOME}/.tmux.conf" true
 compare_config "git/gitconfig.template" "${HOME}/.gitconfig"
+
+function direnv_url() {
+	local tag os
+	tag="$(curl https://github.com/direnv/direnv/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	if [ "$(uname)" == "Darwin" ]; then
+		os="darwin"
+	else
+		os="linux"
+	fi
+	echo "https://github.com/direnv/direnv/releases/download/${tag}/direnv.${os}-amd64"
+}
+
+function kubectl_url() {
+	local tag os
+	tag="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
+	if [ "$(uname)" == "Darwin" ]; then
+		os="darwin"
+	else
+		os="linux"
+	fi
+	echo "https://storage.googleapis.com/kubernetes-release/release/${tag}/bin/${os}/amd64/kubectl"
+}
+
+if [ ! -d "${HOME}/bin" ]; then
+	mkdir -p "${HOME}/bin"
+fi
+if [ ! -f "${HOME}/bin/direnv" ]; then
+	curl -sL "$(direnv_url)" -o "${HOME}/bin/direnv"
+	chmod +x "${HOME}/bin/direnv"
+fi
+if [ ! -f "${HOME}/bin/kubectl" ]; then
+	curl -sL "$(kubectl_url)" -o "${HOME}/bin/kubectl"
+	chmod +x "${HOME}/bin/kubectl"
+fi
+
+if [ ! -f "${MYSHELL}/plugins/kube-ps1.sh" ]; then
+	mkdir -p "${MYSHELL}/plugins"
+	curl -sL "https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh" -o "${MYSHELL}/plugins/kube-ps1.sh"
+fi
 
 popd &>/dev/null

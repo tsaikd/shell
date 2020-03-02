@@ -5,6 +5,9 @@ export MYSHELL="${MYSHELL:-${HOME}/.my-shell}"
 # Uncomment this to disable bi-weekly auto-update checks (default: false)
 # export DISABLE_AUTO_UPDATE="true"
 
+# Uncomment this to disable automatically attach existed session (default: false)
+# export DISABLE_AUTO_SESSION="true"
+
 # Uncomment to change how often before auto-updates occur? (in days, default: 13)
 # export UPDATE_SHELL_DAYS=13
 

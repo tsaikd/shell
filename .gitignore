@@ -1,5 +1,6 @@
 *.swp
 /.last-update
+/plugins/kube-ps1.sh
 /zsh/oh-my-zsh/
 /custom/*
 !/custom/README.md
