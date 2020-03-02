@@ -163,6 +163,20 @@ function etcdctl_info() {
 	echo "etcd-${tag}-${os}-amd64/etcdctl"
 }
 
+applist+=('hadolint hadolint_info')
+function hadolint_info() {
+	local tag os
+	tag="$(curl https://github.com/hadolint/hadolint/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="Darwin"
+	else
+		os="Linux"
+	fi
+	echo "${typebinray}"
+	echo "${tag#v}"
+	echo "https://github.com/hadolint/hadolint/releases/download/${tag}/hadolint-${os}-x86_64"
+}
+
 applist+=('helm helm_info')
 function helm_info() {
 	local tag os
