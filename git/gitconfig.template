@@ -23,9 +23,13 @@
 	mg = merge --no-edit
 	po = push origin
 	pog = push origin gh-pages:gh-pages
-	pom = push origin master:refs/heads/master
+	pom = push origin HEAD:refs/heads/master
 	pom1 = push origin HEAD~1:refs/heads/master
-	pomg = push origin master:refs/heads/master master:gh-pages --tags
+	pom2 = push origin HEAD~2:refs/heads/master
+	pom3 = push origin HEAD~3:refs/heads/master
+	pom4 = push origin HEAD~4:refs/heads/master
+	pom5 = push origin HEAD~5:refs/heads/master
+	pomg = push origin HEAD:refs/heads/master master:gh-pages --tags
 	pokd = push origin HEAD:tsaikd -f
 	pokd1 = push origin HEAD~1:tsaikd -f
 	pokd2 = push origin HEAD~2:tsaikd -f
