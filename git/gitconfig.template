@@ -3,8 +3,12 @@
 	email = UNKNOWN@example.com
 [alias]
 	br = branch
+	chc = cherry-pick --continue
 	ci = commit -s
 	cia = commit -s --amend
+	ciakd = !git commit -s --amend -a --no-edit && git pokd
+	cit = commit -s -a -m test
+	citkd = !git commit -s -a --allow-empty -m test && git pokd
 	co = checkout
 	cotm = checkout -b master -t origin/master
 	com = checkout origin/master
@@ -13,7 +17,6 @@
 	fe = fetch --all --prune
 	sa = stash
 	st = status
-	ui = update-server-info
 	lb = for-each-ref --sort=-committerdate
 	ll = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
 	llog = log --graph --decorate --all
@@ -21,7 +24,23 @@
 	po = push origin
 	pog = push origin gh-pages:gh-pages
 	pom = push origin master:refs/heads/master
+	pom1 = push origin HEAD~1:refs/heads/master
 	pomg = push origin master:refs/heads/master master:gh-pages --tags
+	pokd = push origin HEAD:tsaikd -f
+	pokd1 = push origin HEAD~1:tsaikd -f
+	pokd2 = push origin HEAD~2:tsaikd -f
+	pokd3 = push origin HEAD~3:tsaikd -f
+	pokd4 = push origin HEAD~4:tsaikd -f
+	pokd5 = push origin HEAD~5:tsaikd -f
+	re = rebase -i HEAD~10
+	re2 = rebase -i HEAD~2
+	re3 = rebase -i HEAD~3
+	re4 = rebase -i HEAD~4
+	re5 = rebase -i HEAD~5
+	re6 = rebase -i HEAD~6
+	re7 = rebase -i HEAD~7
+	re8 = rebase -i HEAD~8
+	re9 = rebase -i HEAD~9
 	reba = rebase --abort
 	rebc = rebase --continue
 	sm = submodule
