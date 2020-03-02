@@ -6,6 +6,7 @@ PN="${BASH_SOURCE[0]##*/}"
 PD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 typebinray="binary"
 typetarball="tarball"
+typezip="zip"
 typeplugin="plugin"
 applist=()
 
@@ -72,6 +73,31 @@ function install_application() {
 			popd >/dev/null
 		fi
 		;;
+	"${typezip}")
+		[[ -z "${url}" ]] && echo "Empty application url: '${application}'" && exit 1
+		[[ -z "${tarpath}" ]] && echo "Empty application tarball path: '${application}'" && exit 1
+		if [[ ! -d "${HOME}/bin" ]]; then
+			mkdir -p "${HOME}/bin"
+		fi
+		localpath="${HOME}/bin/${application}-${version}"
+		tmpdir="/tmp/my-shell-tmp-$$"
+
+		if [[ -x "${localpath}" ]]; then
+			echo "Installed ${application}-${version}"
+		else
+			echo "Downloading ${application}-${version} ..."
+			mkdir -p "${tmpdir}"
+			curl -L "${url}" -o "${tmpdir}/download-${application}-${version}"
+			pushd "${tmpdir}" >/dev/null
+			unzip -x "${tmpdir}/download-${application}-${version}"
+			mv "${tmpdir}/${tarpath}" "${localpath}"
+			popd >/dev/null
+			rm -rf "${tmpdir}"
+			pushd "${HOME}/bin" >/dev/null
+			ln -sf "${application}-${version}" "${application}"
+			popd >/dev/null
+		fi
+		;;
 	"${typeplugin}")
 		[[ -z "${url}" ]] && echo "Empty application url: '${application}'" && exit 1
 		[[ -z "${MYSHELL}" ]] && echo "Empty MYSHELL environment variable" && exit 1
@@ -118,18 +144,19 @@ function direnv_info() {
 	echo "https://github.com/direnv/direnv/releases/download/${tag}/direnv.${os}-amd64"
 }
 
-applist+=('kubectl kubectl_info')
-function kubectl_info() {
+applist+=('helm helm_info')
+function helm_info() {
 	local tag os
-	tag="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
+	tag="$(curl https://github.com/helm/helm/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="darwin"
 	else
 		os="linux"
 	fi
-	echo "${typebinray}"
+	echo "${typetarball}"
 	echo "${tag#v}"
-	echo "https://storage.googleapis.com/kubernetes-release/release/${tag}/bin/${os}/amd64/kubectl"
+	echo "https://get.helm.sh/helm-${tag}-${os}-amd64.tar.gz"
+	echo "${os}-amd64/helm"
 }
 
 applist+=('k9s k9s_info')
@@ -152,6 +179,78 @@ function kube_ps1_info() {
 	echo "${typeplugin}"
 	echo "${tag}"
 	echo "https://raw.githubusercontent.com/jonmosco/kube-ps1/${tag}/kube-ps1.sh"
+}
+
+applist+=('kubectl kubectl_info')
+function kubectl_info() {
+	local tag os
+	tag="$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="darwin"
+	else
+		os="linux"
+	fi
+	echo "${typebinray}"
+	echo "${tag#v}"
+	echo "https://storage.googleapis.com/kubernetes-release/release/${tag}/bin/${os}/amd64/kubectl"
+}
+
+applist+=('lazydocker lazydocker_info')
+function lazydocker_info() {
+	local tag os
+	tag="$(curl https://github.com/jesseduffield/lazydocker/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="Darwin"
+	else
+		os="Linux"
+	fi
+	echo "${typetarball}"
+	echo "${tag#v}"
+	echo "https://github.com/jesseduffield/lazydocker/releases/download/${tag}/lazydocker_${tag#v}_${os}_x86_64.tar.gz"
+	echo "lazydocker"
+}
+
+applist+=('rke rke_info')
+function rke_info() {
+	local tag os
+	tag="$(curl https://github.com/rancher/rke/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="darwin"
+	else
+		os="linux"
+	fi
+	echo "${typebinray}"
+	echo "${tag#v}"
+	echo "https://github.com/rancher/rke/releases/download/${tag}/rke_${os}-amd64"
+}
+
+applist+=('terraform terraform_info')
+function terraform_info() {
+	local tag os
+	tag="$(curl https://releases.hashicorp.com/terraform/ -s | grep -oE ">terraform_[^<>]+" | head -n 1 | cut -c 12-)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="darwin"
+	else
+		os="linux"
+	fi
+	echo "${typezip}"
+	echo "${tag}"
+	echo "https://releases.hashicorp.com/terraform/${tag}/terraform_${tag}_${os}_amd64.zip"
+	echo "terraform"
+}
+
+applist+=('yq yq_info')
+function yq_info() {
+	local tag os
+	tag="$(curl https://github.com/mikefarah/yq/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="darwin"
+	else
+		os="linux"
+	fi
+	echo "${typebinray}"
+	echo "${tag}"
+	echo "https://github.com/mikefarah/yq/releases/download/${tag}/yq_${os}_amd64"
 }
 
 function main() {
