@@ -144,6 +144,25 @@ function direnv_info() {
 	echo "https://github.com/direnv/direnv/releases/download/${tag}/direnv.${os}-amd64"
 }
 
+applist+=('etcdctl etcdctl_info')
+function etcdctl_info() {
+	local tag os typ url
+	tag="$(curl https://github.com/etcd-io/etcd/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="darwin"
+		typ="${typezip}"
+		url="https://github.com/etcd-io/etcd/releases/download/${tag}/etcd-${tag}-${os}-amd64.zip"
+	else
+		os="linux"
+		typ="${typetarball}"
+		url="https://github.com/etcd-io/etcd/releases/download/${tag}/etcd-${tag}-${os}-amd64.tar.gz"
+	fi
+	echo "${typ}"
+	echo "${tag#v}"
+	echo "${url}"
+	echo "etcd-${tag}-${os}-amd64/etcdctl"
+}
+
 applist+=('helm helm_info')
 function helm_info() {
 	local tag os
