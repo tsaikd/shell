@@ -192,6 +192,20 @@ function helm_info() {
 	echo "${os}-amd64/helm"
 }
 
+applist+=('jq jq_info')
+function jq_info() {
+	local tag os
+	tag="$(curl https://github.com/stedolan/jq/releases/latest -s | grep -oE "tag/jq-[v0-9.]+" | cut -c 8-)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="osx-amd64"
+	else
+		os="linux64"
+	fi
+	echo "${typebinray}"
+	echo "${tag#v}"
+	echo "https://github.com/stedolan/jq/releases/download/jq-${tag}/jq-${os}"
+}
+
 applist+=('k9s k9s_info')
 function k9s_info() {
 	local tag="0.8.2" os
