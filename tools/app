@@ -223,7 +223,8 @@ function jq_info() {
 
 applist+=('k9s k9s_info')
 function k9s_info() {
-	local tag="0.8.2" os
+	local tag os
+	tag="$(curl https://github.com/derailed/k9s/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 6-)"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="Darwin"
 	else
@@ -231,7 +232,7 @@ function k9s_info() {
 	fi
 	echo "${typetarball}"
 	echo "${tag#v}"
-	echo "https://github.com/derailed/k9s/releases/download/${tag}/k9s_${tag}_${os}_x86_64.tar.gz"
+	echo "https://github.com/derailed/k9s/releases/download/v${tag#v}/k9s_${os}_x86_64.tar.gz"
 	echo "k9s"
 }
 
