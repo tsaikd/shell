@@ -163,6 +163,21 @@ function etcdctl_info() {
 	echo "etcd-${tag}-${os}-amd64/etcdctl"
 }
 
+applist+=('golangci-lint golangci_lint_info')
+function golangci_lint_info() {
+	local tag os
+	tag="$(curl https://github.com/golangci/golangci-lint/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 6-)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		os="darwin"
+	else
+		os="linux"
+	fi
+	echo "${typetarball}"
+	echo "${tag#v}"
+	echo "https://github.com/golangci/golangci-lint/releases/download/v${tag#v}/golangci-lint-${tag#v}-${os}-amd64.tar.gz"
+	echo "golangci-lint-${tag#v}-${os}-amd64/golangci-lint"
+}
+
 applist+=('hadolint hadolint_info')
 function hadolint_info() {
 	local tag os
