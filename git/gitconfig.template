@@ -14,7 +14,8 @@
 	com = checkout origin/master
 	di = diff -b -w
 	diw = diff -b -w --color-words
-	fe = fetch --all --prune
+	fe = fetch --all
+	fep = fetch --all --prune --prune-tags
 	sa = stash
 	st = status
 	lb = for-each-ref --sort=-committerdate
@@ -47,6 +48,7 @@
 	re9 = rebase -i HEAD~9
 	reba = rebase --abort
 	rebc = rebase --continue
+	rlog = reflog --pretty=fuller
 	sm = submodule
 	smst = submodule status
 	smup = submodule update --init --recursive
