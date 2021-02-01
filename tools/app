@@ -144,6 +144,17 @@ function direnv_info() {
 	echo "https://github.com/direnv/direnv/releases/download/${tag}/direnv.${os}-amd64"
 }
 
+applist+=('docker-compose docker_compose_info')
+function docker_compose_info() {
+	local tag os machine
+	tag="$(curl https://github.com/docker/compose/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	os="$(uname -s)"
+	machine="$(uname -m)"
+	echo "${typebinray}"
+	echo "${tag#v}"
+	echo "https://github.com/docker/compose/releases/download/${tag}/docker-compose-${os}-${machine}"
+}
+
 applist+=('etcdctl etcdctl_info')
 function etcdctl_info() {
 	local tag os typ url
