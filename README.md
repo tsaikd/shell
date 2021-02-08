@@ -8,6 +8,5 @@ bash
  * .bashrc
  * .gitconfig
    * need to customzie USER and EMAIL
- * .screenrc
- * .toprc
+ * .tmux.conf
  * .vimrc

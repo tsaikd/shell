@@ -10,8 +10,7 @@ set-option -g history-limit 15000
 set -g status-left-length 32
 set -g status-bg blue
 set -g status-fg white
-set-window-option -g window-status-current-bg red
-set-window-option -g window-status-current-attr bright
+set-window-option -g window-status-current-style bg=red,bright
 set -g status-left "#[fg=white,bright] #h#[default] "
 set -g status-right "#[fg=green,bright](#(top -bn1 | sed -n '1,5{/Cpu/{s/%/ /g;p}}' | grep -o '[[:digit:].]* *id' | sed 's/%/ /' | awk '{print 100-$1}')% #(awk '/^MemTotal:/{t=$2}; /^MemAvailable/{u=t-$2; print int(100*u/t + 0.5)}' /proc/meminfo)%)#[default] #[fg=yellow,bright]%m/%d %H:%M#[default]"
 
@@ -56,14 +55,8 @@ unbind -n M-PageUp
 bind -n M-PageUp previous-window
 unbind -n M-PageDown
 bind -n M-PageDown next-window
-unbind -n C-S-Left
-bind -n C-S-Left swap-window -t -1
-unbind -n C-S-Right
-bind -n C-S-Right swap-window -t +1
-unbind PageUp
-bind -r PageUp swap-window -t -1
-unbind PageDown
-bind -r PageDown swap-window -t +1
+bind -r S-Left swap-window -t -1\; select-window -t -1
+bind -r S-Right swap-window -t +1\; select-window -t +1
 
 # clear history ^K
 unbind ^K
@@ -97,11 +90,6 @@ bind Tab select-pane -t:.+
 unbind BTab
 bind BTab select-pane -t:.-
 
-# ^w windowlist -b
-unbind ^w
-bind ^w choose-window
-
 # easily toggle synchronization (mnemonic: e is for echo)
 bind e setw synchronize-panes on
 bind E setw synchronize-panes off
-
