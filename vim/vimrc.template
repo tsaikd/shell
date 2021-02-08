@@ -2,6 +2,7 @@ syntax on
 set nocin
 set noai
 set nobackup
+set backupcopy=yes
 set tabstop=4
 set shiftwidth=4
 " autocmd FileType c,cpp set nocindent
@@ -29,6 +30,8 @@ map <F9> :wincmd p<CR>
 map <F11> gg=G<CR>
 " 轉換檔案編碼
 map <F12> :set tenc=utf-8<CR>:set fenc=utf-8<CR>
+" -1
+map <C-b> <C-a>
 
 " TagList
 nnoremap <silent> <F8> :Tlist<CR>:wincmd p<CR>
@@ -48,4 +51,3 @@ if has("cscope")
 	set csverb
 	nmap <C-[>s :cs find s <C-R>=expand("<cword>")<CR><CR>
 endif
-

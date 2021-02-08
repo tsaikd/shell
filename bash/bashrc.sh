@@ -98,13 +98,13 @@ if [ "${TERM}" == "screen" ] ; then
 fi
 
 # setup prompt
-PS1_HOST='\[\e[01;31m\]\h'
+PS1_HOST='\[\e[01;31m\]\h\[\e[m\]'
 if [ "$(id -u)" -ne 0 ] ; then
-	PS1_USER=' \[\e[01;32m\]\u'
+	PS1_USER=' \[\e[01;32m\]\u\[\e[m\]'
 else
-	PS1_USER=' \[\e[01;33;41m\]\u'
+	PS1_USER=' \[\e[01;33;41m\]\u\[\e[m\]'
 fi
-PS1_DIR=' \[\e[01;34;40m\]\w\[\e[m\]'
+PS1_DIR=' \[\e[38;5;51m\]\w\[\e[m\]'
 PS1_TAIL='\[\e[m\] $ '
 PS1_EVAL='${PS1_HOST}${PS1_USER}${PS1_DIR}${PS1_GIT}${PS1_TAIL}'
 eval PS1="${PS1_EVAL}"
@@ -136,7 +136,7 @@ fi
 if [ "$(type -p tmux)" ] ; then
 	if [ -z "${TMUX}" ] ; then
 		function sr() {
-			tmux attach || tmux
+			tmux attach -d || tmux
 			clear
 		}
 	fi
