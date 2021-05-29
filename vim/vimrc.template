@@ -5,6 +5,7 @@ set nobackup
 set backupcopy=yes
 set tabstop=4
 set shiftwidth=4
+set mouse=
 " autocmd FileType c,cpp set nocindent
 
 set t_Co=256
