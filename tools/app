@@ -147,7 +147,7 @@ function direnv_info() {
 applist+=('docker-compose docker_compose_info')
 function docker_compose_info() {
 	local tag os machine
-	tag="$(curl https://github.com/docker/compose/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	tag="$(curl https://github.com/docker/compose/releases/latest -sL | grep -oE "tag/[v0-9.]+" | head -n 1 | cut -c 5-)"
 	os="$(uname -s)"
 	machine="$(uname -m)"
 	echo "${typebinray}"
