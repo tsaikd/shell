@@ -132,16 +132,18 @@ function get_application_function() {
 
 applist+=('direnv direnv_info')
 function direnv_info() {
-	local tag os
-	tag="$(curl https://github.com/direnv/direnv/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	local tag os arch
+	tag="$(curl https://api.github.com/repos/direnv/direnv/releases/latest -s | awk '/tag_name/{print $2}' | sed 's/[",]//g')"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="darwin"
 	else
 		os="linux"
 	fi
+	arch="$(uname -m)"
+	[[ "${arch}" == "x86_64" ]] && arch="amd64"
 	echo "${typebinray}"
 	echo "${tag#v}"
-	echo "https://github.com/direnv/direnv/releases/download/${tag}/direnv.${os}-amd64"
+	echo "https://github.com/direnv/direnv/releases/download/${tag}/direnv.${os}-${arch}"
 }
 
 applist+=('docker-compose docker_compose_info')
