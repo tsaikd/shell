@@ -130,10 +130,15 @@ function get_application_function() {
 	done
 }
 
+function get_tag_gitub() {
+	local repo="${1}"
+	curl -s "https://api.github.com/repos/${repo}/releases/latest" | awk '/tag_name/{print $2}' | sed 's/[",]//g'
+}
+
 applist+=('direnv direnv_info')
 function direnv_info() {
 	local tag os arch
-	tag="$(curl https://api.github.com/repos/direnv/direnv/releases/latest -s | awk '/tag_name/{print $2}' | sed 's/[",]//g')"
+	tag="$(get_tag_gitub "direnv/direnv")"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="darwin"
 	else
@@ -160,7 +165,7 @@ function docker_compose_info() {
 applist+=('etcdctl etcdctl_info')
 function etcdctl_info() {
 	local tag os typ url
-	tag="$(curl https://github.com/etcd-io/etcd/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	tag="$(get_tag_gitub "etcd-io/etcd")"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="darwin"
 		typ="${typezip}"
@@ -179,7 +184,7 @@ function etcdctl_info() {
 applist+=('golangci-lint golangci_lint_info')
 function golangci_lint_info() {
 	local tag os
-	tag="$(curl https://github.com/golangci/golangci-lint/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 6-)"
+	tag="$(get_tag_gitub "golangci/golangci-lint")"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="darwin"
 	else
@@ -194,7 +199,7 @@ function golangci_lint_info() {
 applist+=('hadolint hadolint_info')
 function hadolint_info() {
 	local tag os
-	tag="$(curl https://github.com/hadolint/hadolint/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	tag="$(get_tag_gitub "hadolint/hadolint")"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="Darwin"
 	else
@@ -208,7 +213,7 @@ function hadolint_info() {
 applist+=('helm helm_info')
 function helm_info() {
 	local tag os
-	tag="$(curl https://github.com/helm/helm/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	tag="$(get_tag_gitub "helm/helm")"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="darwin"
 	else
@@ -223,7 +228,7 @@ function helm_info() {
 applist+=('jq jq_info')
 function jq_info() {
 	local tag os
-	tag="$(curl https://github.com/stedolan/jq/releases/latest -s | grep -oE "tag/jq-[v0-9.]+" | cut -c 8-)"
+	tag="$(get_tag_gitub "stedolan/jq" | cut -c4-)"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="osx-amd64"
 	else
@@ -237,7 +242,7 @@ function jq_info() {
 applist+=('k9s k9s_info')
 function k9s_info() {
 	local tag os
-	tag="$(curl https://github.com/derailed/k9s/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 6-)"
+	tag="$(get_tag_gitub "derailed/k9s")"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="Darwin"
 	else
@@ -274,7 +279,7 @@ function kubectl_info() {
 applist+=('lazydocker lazydocker_info')
 function lazydocker_info() {
 	local tag os
-	tag="$(curl https://github.com/jesseduffield/lazydocker/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	tag="$(get_tag_gitub "jesseduffield/lazydocker")"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="Darwin"
 	else
@@ -289,7 +294,7 @@ function lazydocker_info() {
 applist+=('rke rke_info')
 function rke_info() {
 	local tag os
-	tag="$(curl https://github.com/rancher/rke/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	tag="$(get_tag_gitub "rancher/rke")"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="darwin"
 	else
@@ -318,7 +323,7 @@ function terraform_info() {
 applist+=('yq yq_info')
 function yq_info() {
 	local tag os
-	tag="$(curl https://github.com/mikefarah/yq/releases/latest -s | grep -oE "tag/[v0-9.]+" | cut -c 5-)"
+	tag="$(get_tag_gitub "mikefarah/yq")"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="darwin"
 	else
@@ -329,6 +334,26 @@ function yq_info() {
 	echo "https://github.com/mikefarah/yq/releases/download/${tag}/yq_${os}_amd64"
 }
 
+function get_info() {
+	local application appfunc apptype version url tarpath localpath tmpdir
+	for application in "$@"; do
+		appfunc="$(get_application_function "${application}")"
+
+		[[ -z "${appfunc}" ]] && usage "Unknown application: '${application}'"
+
+		read -d "\n" apptype version url tarpath <<< "$(${appfunc})"
+
+		cat <<EOF
+[${application}]
+type=${apptype}
+version=${version}
+url=${url}
+tar=${tarpath}
+
+EOF
+	done
+}
+
 function main() {
 	local application
 	for application in "$@"; do
@@ -336,9 +361,10 @@ function main() {
 	done
 }
 
-while getopts "h" opt; do
+while getopts "ht" opt; do
 	case "${opt}" in
 	h) usage ;;
+	t) shift ; get_info "$@" ; exit 0 ;;
 	esac
 done
 
