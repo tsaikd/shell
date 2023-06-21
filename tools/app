@@ -228,7 +228,7 @@ function helm_info() {
 applist+=('jq jq_info')
 function jq_info() {
 	local tag os
-	tag="$(get_tag_gitub "stedolan/jq" | cut -c4-)"
+	tag="$(get_tag_gitub "jqlang/jq" | cut -c4-)"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="osx-amd64"
 	else
