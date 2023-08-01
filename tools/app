@@ -308,7 +308,7 @@ function rke_info() {
 applist+=('terraform terraform_info')
 function terraform_info() {
 	local tag os
-	tag="$(curl https://releases.hashicorp.com/terraform/ -s | grep -oE ">terraform_[^<>]+" | head -n 1 | cut -c 12-)"
+	tag="$(curl https://releases.hashicorp.com/terraform/ -s | grep -oE ">terraform_[0-9\\.]+<" | head -n 1 | cut -c 12- | sed 's/<//g')"
 	if [[ "$(uname)" == "Darwin" ]]; then
 		os="darwin"
 	else
