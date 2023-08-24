@@ -287,7 +287,7 @@ function lazydocker_info() {
 	fi
 	echo "${typetarball}"
 	echo "${tag#v}"
-	echo "https://github.com/jesseduffield/lazydocker/releases/download/${tag}/lazydocker_${tag#v}_${os}_x86_64.tar.gz"
+	echo "https://github.com/jesseduffield/lazydocker/releases/download/${tag}/lazydocker_${tag#v}_${os}_$(uname -m).tar.gz"
 	echo "lazydocker"
 }
 
