@@ -227,16 +227,13 @@ function helm_info() {
 
 applist+=('jq jq_info')
 function jq_info() {
-	local tag os
+	local tag os machine
 	tag="$(get_tag_gitub "jqlang/jq" | cut -c4-)"
-	if [[ "$(uname)" == "Darwin" ]]; then
-		os="osx-amd64"
-	else
-		os="linux64"
-	fi
+	os="$(uname | tr "[:upper:]" "[:lower:]" | sed 's/darwin/macos/')"
+	machine="$(uname -m | sed 's/aarch64/arm64/')"
 	echo "${typebinray}"
 	echo "${tag#v}"
-	echo "https://github.com/stedolan/jq/releases/download/jq-${tag}/jq-${os}"
+	echo "https://github.com/jqlang/jq/releases/download/jq-${tag}/jq-${os}-${machine}"
 }
 
 applist+=('k9s k9s_info')
